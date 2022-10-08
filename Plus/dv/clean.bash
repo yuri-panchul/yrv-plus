@@ -25,16 +25,5 @@ trap cleanup SIGINT SIGTERM ERR EXIT
 cleanup ()
 {
   trap - SIGINT SIGTERM ERR
-  rm -rf run
+  rm -rf log.txt run
 }
-
-rm -rf log.txt run
-mkdir run
-cd run
-
-   cp "../$hex_file"         . \
-|| cp "../../rtl/$hex_file"  .
-
-iverilog -g2005-sv -I ../../rtl ../*.sv 2>&1 | tee "$log"
-vvp a.out                               2>&1 | tee "$log"
-gtkwave dump.vcd
