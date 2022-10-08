@@ -4,22 +4,20 @@
 /**                                                                                       **/
 /** SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1                                      **/
 /**                                                                                       **/
-/** Licensed under the Solderpad Hardware License v 2.1 (the “License”); you may not use  **/
+/** Licensed under the Solderpad Hardware License v 2.1 (the "License"); you may not use  **/
 /** this file except in compliance with the License, or, at your option, the Apache       **/
 /** License version 2.0. You may obtain a copy of the License at                          **/
 /**                                                                                       **/
 /** https://solderpad.org/licenses/SHL-2.1/                                               **/
 /**                                                                                       **/
 /** Unless required by applicable law or agreed to in writing, any work distributed under **/
-/** the License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS OF   **/
+/** the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF   **/
 /** ANY KIND, either express or implied. See the License for the specific language        **/
 /** governing permissions and limitations under the License.                              **/
 /**                                                                                       **/
 /** YRV simple mcu system                                             Rev 0.0  03/29/2021 **/
 /**                                                                                       **/
 /*******************************************************************************************/
-`define INSTANCE_MEM
-
 `define IO_BASE   16'hffff                                 /* msword of i/o address        */
 `define IO_PORT10 14'h0000                                 /* lsword of port 1/0 address   */
 `define IO_PORT32 14'h0001                                 /* lsword of port 3/2 address   */
@@ -27,13 +25,18 @@
 `define IO_PORT76 14'h0003                                 /* lsword of port 7/6 address   */
 `define MEM_BASE  16'h0000                                 /* msword of mem address        */
 
-`include "yrv_top.v"                                       /* processor                    */
-`include "serial_rx.v"                                     /* serial receive               */
-`include "serial_tx.v"                                     /* serial transmit              */
-`include "serial_top.v"                                    /* serial port                  */
+/* processor                                                                               */
+`include "yrv_top.v"
+/* serial receive                                                                          */
+`include "serial_rx.v"
+/* serial transmit                                                                         */
+`include "serial_tx.v"
+/* serial port                                                                             */
+`include "serial_top.v"
 
 `ifdef INSTANCE_MEM
-`include "inst_mem.v"                                      /* instantiated memory          */
+/* instantiated memory                                                                     */
+`include "inst_mem.v"
 `endif
 
 module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk, ser_txd,
@@ -98,7 +101,7 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
   wire   [31:0] mem_rdata;                                 /* raw read data                */
 `else
   wire    [3:0] mem_wr_byte;                               /* system ram byte enables      */
-  reg     {7:0] mcu_mem [0:4095];                          /* system ram                   */
+  reg     [7:0] mcu_mem [0:4095];                          /* system ram                   */
   reg    [31:0] mem_rdata;                                 /* raw read data                */
 `endif
 
@@ -233,8 +236,3 @@ initial $readmemh("code_demo.mem", mcu_mem);
   assign port7_dat = {4'h0, bufr_empty, bufr_done, bufr_full, bufr_ovr, rx_rdata};
 
   endmodule
-
-
-
-
-

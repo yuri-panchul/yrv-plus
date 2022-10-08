@@ -4,21 +4,23 @@
 /**                                                                                       **/
 /** SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1                                      **/
 /**                                                                                       **/
-/** Licensed under the Solderpad Hardware License v 2.1 (the “License”); you may not use  **/
+/** Licensed under the Solderpad Hardware License v 2.1 (the "License"); you may not use  **/
 /** this file except in compliance with the License, or, at your option, the Apache       **/
 /** License version 2.0. You may obtain a copy of the License at                          **/
 /**                                                                                       **/
 /** https://solderpad.org/licenses/SHL-2.1/                                               **/
 /**                                                                                       **/
 /** Unless required by applicable law or agreed to in writing, any work distributed under **/
-/** the License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS OF   **/
+/** the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF   **/
 /** ANY KIND, either express or implied. See the License for the specific language        **/
 /** governing permissions and limitations under the License.                              **/
 /**                                                                                       **/
 /** YRV Alchrity system                                               Rev 0.0  03/30/2020 **/
 /**                                                                                       **/
 /*******************************************************************************************/
-`include "yrv_mcu.v"                                       /* microcontroller              */
+
+/* microcontroller                                                                         */
+`include "yrv_mcu.v"
 
 module yrv_alchrity (AN_io, C6_brd, C8_brd, C9_brd, C42_brd, C43_brd, C45_brd, C46_brd,
                      DO_brd, L_io, LED_brd, RA_io, RB_io, RC_io, RD_io, RE_io, RF_io, RG_io,
@@ -157,8 +159,3 @@ module yrv_alchrity (AN_io, C6_brd, C8_brd, C9_brd, C42_brd, C43_brd, C45_brd, C
     end
 
   endmodule
-
-
-
-
-

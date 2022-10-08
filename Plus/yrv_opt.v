@@ -4,14 +4,14 @@
 /**                                                                                       **/
 /** SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1                                      **/
 /**                                                                                       **/
-/** Licensed under the Solderpad Hardware License v 2.1 (the “License”); you may not use  **/
+/** Licensed under the Solderpad Hardware License v 2.1 (the "License"); you may not use  **/
 /** this file except in compliance with the License, or, at your option, the Apache       **/
 /** License version 2.0. You may obtain a copy of the License at                          **/
 /**                                                                                       **/
 /** https://solderpad.org/licenses/SHL-2.1/                                               **/
 /**                                                                                       **/
 /** Unless required by applicable law or agreed to in writing, any work distributed under **/
-/** the License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS OF   **/
+/** the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF   **/
 /** ANY KIND, either express or implied. See the License for the specific language        **/
 /** governing permissions and limitations under the License.                              **/
 /**                                                                                       **/
@@ -20,14 +20,23 @@
 /*******************************************************************************************/
 
 // `define SIM_VERSION                                        /* Simulation                   */
-`define ICE40_VERSION                                      /* Lattice iCE40                */
+// `define ICE40_VERSION                                      /* Lattice iCE40                */
 // `define SERIES7_VERSION                                    /* Xilinx 7-series              */
 
-`define INSTANCE_REG                                       /* instantiated registers       */
+`ifdef ICE40_VERSION
+`elsif SERIES7_VERSION
+`else
+  `define GENERIC_VERSION
+`endif
+
+`ifndef GENERIC_VERSION
+  `define INSTANCE_REG                                     /* instantiated registers       */
 // `define INSTANCE_ADD                                       /* instantiated adder           */
 // `define INSTANCE_SUB                                       /* instantiated subtractor      */
 // `define INSTANCE_INC                                       /* instantiated incrementer     */
 // `define INSTANCE_CNT                                       /* instantiated count increment */
+  `define INSTANCE_MEM                                     /* instantiated memories        */
+`endif
 
 /*******************************************************************************************/
 /* read-only csr defaults                                                                  */
@@ -77,8 +86,3 @@
 // `define INSTRET_64                                         /* 64-bit                       */
 // `define INSTRET_32                                      /* 32-bit                       */
 `define INSTRET_0                                       /* none                         */
-
-
-
-
-

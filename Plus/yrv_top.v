@@ -4,42 +4,55 @@
 /**                                                                                       **/
 /** SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1                                      **/
 /**                                                                                       **/
-/** Licensed under the Solderpad Hardware License v 2.1 (the “License”); you may not use  **/
+/** Licensed under the Solderpad Hardware License v 2.1 (the "License"); you may not use  **/
 /** this file except in compliance with the License, or, at your option, the Apache       **/
 /** License version 2.0. You may obtain a copy of the License at                          **/
 /**                                                                                       **/
 /** https://solderpad.org/licenses/SHL-2.1/                                               **/
 /**                                                                                       **/
 /** Unless required by applicable law or agreed to in writing, any work distributed under **/
-/** the License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS OF   **/
+/** the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF   **/
 /** ANY KIND, either express or implied. See the License for the specific language        **/
 /** governing permissions and limitations under the License.                              **/
 /**                                                                                       **/
 /** YRV top level                                                     Rev 0.0  03/29/2020 **/
 /**                                                                                       **/
 /*******************************************************************************************/
-`include "yrv_opt.v"                                       /* options                      */
-`include "define_dec.v"                                    /* instruction opcodes          */
-`include "define_csr.v"                                    /* standard csr addresses       */
-`include "define_ec.v"                                     /* exception codes              */
-`include "yrv_csr.v"                                       /* control/status registers     */
-`include "yrv_int.v"                                       /* interrupt control            */
-`include "yrv_cpu.v"                                       /* cpu                          */
+
+/* options                                                                                 */
+`include "yrv_opt.v"
+/* instruction opcodes                                                                     */
+`include "define_dec.v"
+/* standard csr addresses                                                                  */
+`include "define_csr.v"
+/* exception codes                                                                         */
+`include "define_ec.v"
+/* control/status registers                                                                */
+`include "yrv_csr.v"
+/* interrupt control                                                                       */
+`include "yrv_int.v"
+/* cpu                                                                                     */
+`include "yrv_cpu.v"
 
 `ifdef INSTANCE_REG
-`include "inst_reg.v"                                      /* instantiated registers       */
+/* instantiated registers                                                                  */
+`include "inst_reg.v"
 `endif
 `ifdef INSTANCE_ADD
-`include "inst_add.v"                                      /* instantiated adder           */
+/* instantiated adder                                                                      */
+`include "inst_add.v"
 `endif
 `ifdef INSTANCE_SUB
-`include "inst_sub.v"                                      /* instantiated subtractor      */
+/* instantiated subtractor                                                                 */
+`include "inst_sub.v"
 `endif
 `ifdef INSTANCE_INC
-`include "inst_inc.v"                                      /* instantiated incrementer     */
+/* instantiated incrementer                                                                */
+`include "inst_inc.v"
 `endif
 `ifdef INSTANCE_CNT
-`include "inst_cnt.v"                                      /* instantiated count increment */
+/* instantiated count increment                                                            */
+`include "inst_cnt.v"
 `endif
 
 module yrv_top  (csr_achk, csr_addr, csr_read, csr_wdata, csr_write, debug_mode, ebrk_inst,
@@ -175,8 +188,3 @@ module yrv_top  (csr_achk, csr_addr, csr_read, csr_wdata, csr_write, debug_mode,
                  .timer_match(timer_match), .wfi_state(wfi_state) );
 
   endmodule
-
-
-
-
-

@@ -18,9 +18,11 @@
 /** YRV processor test bench                                          Rev 0.0  02/08/2021 **/
 /**                                                                                       **/
 /*******************************************************************************************/
-`timescale 1ns / 10ps                                      /* set time scale               */
+/* set time scale                                                                          */
+`timescale 1ns / 10ps
 
-`include "yrv_alchrity.v"                                  /* top level                    */
+/* top level                                                                               */
+`include "yrv_alchrity.v"
 
 module testbench;
 
@@ -146,17 +148,29 @@ module testbench;
   /* run the test patterns                                                                 */
   /*****************************************************************************************/
   initial begin
-    resettask;
-    $readmemh("clock_rom.vm", YRV.MCU.mcu_mem);
-    wait (C46_brd);
+    `ifdef __ICARUS__
+      $dumpvars;
+    `endif
 
-    $stop;
+    resettask;
+    // $readmemh("clock_rom.vm", YRV.MCU.mcu_mem);
+
+    fork
+      begin
+        wait (C46_brd);
+      end
+      begin
+        repeat (1000) @ (posedge MHZ_100);
+        $display ("!!! TIMEOUT !!!");
+        disable fork;
+      end
+    join_any
+
+    `ifdef MODEL_TECH  // Mentor ModelSim and Questa
+      $stop;
+    `else
+      $finish;
+    `endif
     end
 
   endmodule
-
-
-
-
-
-
