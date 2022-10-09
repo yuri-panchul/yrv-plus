@@ -2,4 +2,6 @@
 
 rm -rf run
 mkdir run
-cp *.* run
+cd run
+
+cp ../../../scripts/*.* .
