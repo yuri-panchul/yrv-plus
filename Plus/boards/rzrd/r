@@ -1,0 +1,5 @@
+#!/bin/bash
+
+rm -rf run
+mkdir run
+cp *.* run
