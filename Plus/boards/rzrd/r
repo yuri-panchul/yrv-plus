@@ -4,4 +4,4 @@ rm -rf run
 mkdir run
 cd run
 
-cp ../../../scripts/*.* .
+cp ../../../scripts/*.* ../*.* .
