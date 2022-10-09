@@ -56,6 +56,7 @@ module top
   wire slow_clk;
   global i_global (.in (cnt [22]), .out (slow_clk));
 
+  wire [31:0] mem_addr;
   yrv_mcu i_yrv_mcu (.clk (slow_clk), .*);
   // yrv_mcu i_yrv_mcu (.*);
 
@@ -63,10 +64,10 @@ module top
 
   // The original board had port3_reg [13:8], debug_mode, wfi_state
   // assign led = port3_reg [11:8];
-  assign led = { slow_clk, i_yrv_mcu.mem_addr [4:2] };
+  assign led = { slow_clk, mem_addr [4:2] };
 
   assign abcdefgh =
-  {
+  ~ {
     port0_reg[6],
     port0_reg[5],
     port0_reg[4],
@@ -78,7 +79,7 @@ module top
   };
 
   assign digit =
-  {
+  ~ {
     port1_reg [0],
     port1_reg [1],
     port1_reg [2],

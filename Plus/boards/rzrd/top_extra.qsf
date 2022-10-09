@@ -1,14 +1,2 @@
 set_global_assignment -name SEARCH_PATH  ../../../rtl
-
-set_global_assignment -name VERILOG_FILE define_csr.v
-set_global_assignment -name VERILOG_FILE define_dec.v
-set_global_assignment -name VERILOG_FILE define_ec.v
-set_global_assignment -name VERILOG_FILE serial_rx.v
-set_global_assignment -name VERILOG_FILE serial_top.v
-set_global_assignment -name VERILOG_FILE serial_tx.v
-set_global_assignment -name VERILOG_FILE yrv_cpu.v
-set_global_assignment -name VERILOG_FILE yrv_csr.v
-set_global_assignment -name VERILOG_FILE yrv_int.v
 set_global_assignment -name VERILOG_FILE yrv_mcu.v
-set_global_assignment -name VERILOG_FILE yrv_opt.v
-set_global_assignment -name VERILOG_FILE yrv_top.v
