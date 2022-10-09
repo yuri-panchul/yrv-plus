@@ -45,30 +45,13 @@ module top
 
   //--------------------------------------------------------------------------
 
-  logic [22:0] cnt;
-
-  always_ff @ (posedge clk or negedge resetb)
-    if (~ resetb)
-      cnt <= '0;
-    else
-      cnt <= cnt + 1'd1;
-
-  wire slow_clk;
-  global i_global (.in (cnt [22]), .out (slow_clk));
-
-  wire [31:0] mem_addr;
-  yrv_mcu i_yrv_mcu (.clk (slow_clk), .*);
-  // yrv_mcu i_yrv_mcu (.*);
-
-  seven_segment_4_digits i_7segment (.reset (~ reset_n), .number (mem_addr [15:0]), .*);
+  yrv_mcu i_yrv_mcu (.*);
 
   //--------------------------------------------------------------------------
 
   // The original board had port3_reg [13:8], debug_mode, wfi_state
-  // assign led = port3_reg [11:8];
-  assign led = { slow_clk, mem_addr [4:2] };
+  assign led = port3_reg [11:8];
 
-/*
   assign abcdefgh =
   ~ {
     port0_reg[6],
@@ -88,7 +71,6 @@ module top
     port1_reg [2],
     port1_reg [3]
   };
-*/
 
   //--------------------------------------------------------------------------
 

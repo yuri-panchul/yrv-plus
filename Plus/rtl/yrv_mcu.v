@@ -39,10 +39,8 @@
 `include "inst_mem.v"
 `endif
 
-module yrv_mcu  (mem_addr, debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk, ser_txd,
+module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk, ser_txd,
                  wfi_state, clk, ei_req, nmi_req, port4_in, port5_in, resetb, ser_rxd);
-
-  output [31:0] mem_addr;                                  /* memory address               */
 
   input         clk;                                       /* cpu clock                    */
   input         ei_req;                                    /* external int request         */
