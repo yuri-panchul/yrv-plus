@@ -54,7 +54,7 @@ module tb_yrv_mcu;
 
   //------------------------------------------------------------------------------------
 
-  task init ();
+  task init;
 
     ei_req   <= '0;  // external int request
     nmi_req  <= '0;  // non-maskable interrupt
@@ -66,7 +66,7 @@ module tb_yrv_mcu;
 
   //------------------------------------------------------------------------------------
 
-  task reset ();
+  task reset;
 
     resetb <= 'x;
     repeat (10) @ (posedge clk);
@@ -84,10 +84,23 @@ module tb_yrv_mcu;
       $dumpvars;
     `endif
 
-    init  ();
-    reset ();
+    init;
+    reset;
 
-    repeat (1000) @ (posedge clk);
+    repeat (1000)
+    begin
+      ei_req   <= ($urandom_range (1, 100) == 1);  // external int request
+      nmi_req  <= ($urandom_range (1, 100) == 1);  // non-maskable interrupt
+
+      if (0)
+      begin
+      ser_rxd  <= $urandom ();                     // receive data input
+      port4_in <= $urandom ();                     // port 4
+      port5_in <= $urandom ();                     // port 5
+      end
+
+      @ (posedge clk);
+    end
 
     `ifdef MODEL_TECH  // Mentor ModelSim and Questa
       $stop;

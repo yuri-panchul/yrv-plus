@@ -35,6 +35,10 @@ cd run
    cp "../$hex_file"         . \
 || cp "../../rtl/$hex_file"  .
 
-iverilog -g2005-sv -I ../../rtl ../*.sv 2>&1 | tee "$log"
-vvp a.out                               2>&1 | tee "$log"
+iverilog -g2005-sv -I ../../rtl ../../rtl/yrv_mcu.v ../*.sv 2>&1 \
+  | tee "$log"
+
+vvp a.out 2>&1 \
+  | tee "$log"
+
 gtkwave dump.vcd
