@@ -1,5 +1,0 @@
-set_global_assignment -name SEARCH_PATH  ..
-set_global_assignment -name SEARCH_PATH  ../../../rtl
-
-set_global_assignment -name VERILOG_FILE yrv_mcu.v
-set_global_assignment -name VERILOG_FILE seven_segment_4_digits.sv

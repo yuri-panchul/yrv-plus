@@ -1,11 +1,13 @@
-module seven_segment_4_digits
+module display_dynamic
+# (
+    parameter n_dig = 4,
 (
-    input               clk,
-    input               reset,
-    input        [15:0] number,
+    input                          clk,
+    input                          reset,
+    input        [n_dig * 4 - 1:0] number,
 
-    output logic [ 7:0] abcdefgh,
-    output logic [ 3:0] digit
+    output logic [            7:0] abcdefgh,
+    output logic [n_dig     - 1:0] digit
 );
 
     function [7:0] bcd_to_seg (input [3:0] bcd);
@@ -41,23 +43,23 @@ module seven_segment_4_digits
         else
             cnt <= cnt + 16'd1;
 
-    logic [1:0] i;
+    logic [$bits (n_dig) - 1:0] i;
 
     always_ff @ (posedge clk or posedge reset)
     begin
         if (reset)
         begin
-            abcdefgh <=   bcd_to_seg (0);
-            digit    <= ~ 4'b1;
+            abcdefgh <= bcd_to_seg (4'd0);
+            digit    <= ~ n_dig' (1);
 
-            i <= 0;
+            i <= '0;
         end
         else if (cnt == 16'b0)
         begin
-            abcdefgh <=   bcd_to_seg (number [i * 4 +: 4]);
-            digit    <= ~ (4'b1 << i);
+            abcdefgh <= bcd_to_seg (number [i * 4 +: 4]);
+            digit    <= { digit [0], digit [n_dig - 1:1] };
 
-            i <= i + 1;
+            i <= i + 1'd1;
         end
     end
 

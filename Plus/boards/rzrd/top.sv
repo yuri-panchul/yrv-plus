@@ -1,19 +1,22 @@
+`define INTEL_VERSION
+`include "yrv_mcu.v"
+
 module top
 (
-    input        clk,
-    input        reset_n,
+  input        clk,
+  input        reset_n,
     
-    input  [3:0] key_sw,
-    output [3:0] led,
+  input  [3:0] key_sw,
+  output [3:0] led,
 
-    output [7:0] abcdefgh,
-    output [3:0] digit,
+  output [7:0] abcdefgh,
+  output [3:0] digit,
 
-    output       buzzer,
+  output       buzzer,
 
-    output       hsync,
-    output       vsync,
-    output [2:0] rgb
+  output       hsync,
+  output       vsync,
+  output [2:0] rgb
 );
 
   //--------------------------------------------------------------------------
