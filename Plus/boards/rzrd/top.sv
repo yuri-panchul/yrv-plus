@@ -60,12 +60,15 @@ module top
   yrv_mcu i_yrv_mcu (.clk (slow_clk), .*);
   // yrv_mcu i_yrv_mcu (.*);
 
+  seven_segment_4_digits i_7segment (.reset (~ reset_n), .number (mem_addr [15:0]), .*);
+
   //--------------------------------------------------------------------------
 
   // The original board had port3_reg [13:8], debug_mode, wfi_state
   // assign led = port3_reg [11:8];
   assign led = { slow_clk, mem_addr [4:2] };
 
+/*
   assign abcdefgh =
   ~ {
     port0_reg[6],
@@ -85,6 +88,7 @@ module top
     port1_reg [2],
     port1_reg [3]
   };
+*/
 
   //--------------------------------------------------------------------------
 
