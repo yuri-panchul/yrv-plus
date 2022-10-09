@@ -1,6 +1,7 @@
 module display_dynamic
 # (
-    parameter n_dig = 4,
+    parameter n_dig = 4
+)
 (
     input                          clk,
     input                          reset,
@@ -50,7 +51,7 @@ module display_dynamic
         if (reset)
         begin
             abcdefgh <= bcd_to_seg (4'd0);
-            digit    <= ~ n_dig' (1);
+            digit    <= { { n_dig - 1 { 1'b1 } }, 1'b0 };
 
             i <= '0;
         end
