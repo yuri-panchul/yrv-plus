@@ -44,21 +44,21 @@ module display_dynamic
         else
             cnt <= cnt + 16'd1;
 
-    logic [$bits (n_dig) - 1:0] i;
+    logic [$clog2 (n_dig) - 1:0] i;
 
     always_ff @ (posedge clk or posedge reset)
     begin
         if (reset)
         begin
             abcdefgh <= bcd_to_seg (4'd0);
-            digit    <= { { n_dig - 1 { 1'b1 } }, 1'b0 };
+            digit    <= { 1'b0, { n_dig - 1 { 1'b1 } } };
 
             i <= '0;
         end
         else if (cnt == 16'b0)
         begin
             abcdefgh <= bcd_to_seg (number [i * 4 +: 4]);
-            digit    <= { digit [0], digit [n_dig - 1:1] };
+            digit    <= { digit [n_dig - 2:0], digit [n_dig - 1] };
 
             i <= i + 1'd1;
         end

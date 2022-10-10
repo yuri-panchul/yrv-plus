@@ -43,8 +43,8 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
                  wfi_state, clk, ei_req, nmi_req, port4_in, port5_in, resetb, ser_rxd
 
                  `ifdef EXPOSE_MEM_BUS
-                 mem_ready, mem_rdata, mem_lock, mem_write, mem_trans, mem_ble, mem_addr,
-                 mem_wdata
+                 , mem_ready, mem_rdata, mem_lock, mem_write, mem_trans, mem_ble,
+                 mem_addr, mem_wdata
                  `endif
   );
 

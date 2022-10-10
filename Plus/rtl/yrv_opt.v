@@ -22,7 +22,7 @@
 // `define SIM_VERSION                                        /* Simulation                   */
 // `define ICE40_VERSION                                      /* Lattice iCE40                */
 // `define SERIES7_VERSION                                    /* Xilinx 7-series              */
-   `define INTEL_VERSION                                      /* Intel FPGA (former Altera)   */
+// `define INTEL_VERSION                                      /* Intel FPGA (former Altera)   */
 
 `ifdef ICE40_VERSION
 `elsif SERIES7_VERSION
