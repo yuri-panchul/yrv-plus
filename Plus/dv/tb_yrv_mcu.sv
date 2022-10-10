@@ -23,6 +23,8 @@
 //
 //--------------------------------------------------------------------------------------
 
+`timescale 1 ns / 100 ps
+
 module tb_yrv_mcu;
 
   logic        clk;         // cpu clock
@@ -42,14 +44,26 @@ module tb_yrv_mcu;
   wire  [15:0] port2_reg;   // port 2
   wire  [15:0] port3_reg;   // port 3
 
+  wire         mem_ready;   // memory ready
+  wire  [31:0] mem_rdata;   // memory read data
+  wire         mem_lock;    // memory lock (rmw)
+  wire         mem_write;   // memory write enable
+  wire   [1:0] mem_trans;   // memory transfer type
+  wire   [3:0] mem_ble;     // memory byte lane enables
+  wire  [31:0] mem_addr;    // memory address
+  wire  [31:0] mem_wdata;   // memory write data
+
   yrv_mcu i_yrv_mcu (.*);
 
   //------------------------------------------------------------------------------------
 
+  // The design is supposed to run with the frequency 50 MHz,
+  // i.e. the period is 20 ns
+
   initial
   begin
     clk = '0;
-    forever # 5 clk = ~ clk;
+    forever # 10 clk = ~ clk;
   end
 
   //------------------------------------------------------------------------------------
@@ -87,16 +101,16 @@ module tb_yrv_mcu;
     init;
     reset;
 
-    repeat (1000)
+    for (int i = 0; i < 1000; i ++)
     begin
-      ei_req   <= ($urandom_range (1, 100) == 1);  // external int request
-      nmi_req  <= ($urandom_range (1, 100) == 1);  // non-maskable interrupt
+      ei_req   <= ((i + 1) % 100 == 0);  // external int request
+      nmi_req  <= ((i + 1) % 333 == 0);  // non-maskable interrupt
 
       if (0)
       begin
-      ser_rxd  <= $urandom ();                     // receive data input
-      port4_in <= $urandom ();                     // port 4
-      port5_in <= $urandom ();                     // port 5
+      ser_rxd  <= $urandom ();     // receive data input
+      port4_in <= $urandom ();     // port 4
+      port5_in <= $urandom ();     // port 5
       end
 
       @ (posedge clk);
