@@ -40,6 +40,10 @@
   `define INSTANCE_MEM                                     /* instantiated memories        */
 `endif
 
+`ifdef INTEL_VERSION
+  `define EXPOSE_MEM_BUS
+`endif
+
 /*******************************************************************************************/
 /* read-only csr defaults                                                                  */
 /*******************************************************************************************/

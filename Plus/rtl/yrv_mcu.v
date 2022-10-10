@@ -40,7 +40,13 @@
 `endif
 
 module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk, ser_txd,
-                 wfi_state, clk, ei_req, nmi_req, port4_in, port5_in, resetb, ser_rxd);
+                 wfi_state, clk, ei_req, nmi_req, port4_in, port5_in, resetb, ser_rxd
+
+                 `ifdef EXPOSE_MEM_BUS
+                 mem_ready, mem_rdata, mem_lock, mem_write, mem_trans, mem_ble, mem_addr,
+                 mem_wdata
+                 `endif
+  );
 
   input         clk;                                       /* cpu clock                    */
   input         ei_req;                                    /* external int request         */
@@ -58,6 +64,17 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
   output [15:0] port1_reg;                                 /* port 1                       */
   output [15:0] port2_reg;                                 /* port 2                       */
   output [15:0] port3_reg;                                 /* port 3                       */
+
+`ifdef EXPOSE_MEM_BUS
+  output        mem_ready;                                 /* memory ready                 */
+  output [31:0] mem_rdata;                                 /* memory read data             */
+  output        mem_lock;                                  /* memory lock (rmw)            */
+  output        mem_write;                                 /* memory write enable          */
+  output  [1:0] mem_trans;                                 /* memory transfer type         */
+  output  [3:0] mem_ble;                                   /* memory byte lane enables     */
+  output [31:0] mem_addr;                                  /* memory address               */
+  output [31:0] mem_wdata;                                 /* memory write data            */
+`endif
 
   /*****************************************************************************************/
   /* signal declarations                                                                   */
