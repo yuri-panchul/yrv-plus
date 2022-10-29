@@ -77,6 +77,10 @@ module top
   wire  [15:0] port2_reg;   // port 2
   wire  [15:0] port3_reg;   // port 3
 
+  // Auxiliary UART receive pin
+
+  wire         aux_uart_rx;
+
   // Exposed memory bus for debug purposes
 
   wire         mem_ready;   // memory ready

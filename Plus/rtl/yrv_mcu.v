@@ -74,7 +74,7 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
   output [15:0] port3_reg;                                 /* port 3                       */
 
 `ifdef BOOT_FROM_AUX_UART
-  input         aux_uart_rx;                               /* auxiliary uart receive pin   */
+  input         aux_uart_rx;                               /* auxiliary UART receive pin   */
 `endif
 
 `ifdef EXPOSE_MEM_BUS
