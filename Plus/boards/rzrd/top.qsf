@@ -74,3 +74,8 @@ set_location_assignment PIN_103 -to vsync
 set_location_assignment PIN_104 -to rgb[0]
 set_location_assignment PIN_105 -to rgb[1]
 set_location_assignment PIN_106 -to rgb[2]
+
+set_location_assignment PIN_115 -to uart_rx
+set_location_assignment PIN_114 -to uart_tx
+
+set_location_assignment PIN_100 -to ir

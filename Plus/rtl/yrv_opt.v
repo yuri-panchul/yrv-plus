@@ -27,6 +27,8 @@
 `ifdef ICE40_VERSION
 `elsif SERIES7_VERSION
 `elsif INTEL_VERSION
+  /* Intel FPGA version also uses generic version settings */
+  `define GENERIC_VERSION
 `else
   `define GENERIC_VERSION
 `endif
@@ -41,6 +43,7 @@
 `endif
 
 `ifdef INTEL_VERSION
+  `define BOOT_FROM_AUX_UART
   `define EXPOSE_MEM_BUS
 `endif
 

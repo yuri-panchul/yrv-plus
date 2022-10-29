@@ -39,6 +39,11 @@
 `include "inst_mem.v"
 `endif
 
+`ifdef BOOT_FROM_AUX_UART
+`include "boot_hex_parser.sv"
+`include "boot_uart_receiver.sv"
+`endif
+
 module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk, ser_txd,
                  wfi_state, clk, ei_req, nmi_req, port4_in, port5_in, resetb, ser_rxd
 
@@ -64,6 +69,11 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
   output [15:0] port1_reg;                                 /* port 1                       */
   output [15:0] port2_reg;                                 /* port 2                       */
   output [15:0] port3_reg;                                 /* port 3                       */
+
+
+`ifdef BOOT_FROM_AUX_UART
+  input         aux_uart_rx;                               /* auxiliary uart receive pin   */
+`endif
 
 `ifdef EXPOSE_MEM_BUS
   output        mem_ready;                                 /* memory ready                 */
@@ -128,6 +138,66 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
   assign bus_32    = 1'b1;
   assign mem_ready = 1'b1;
   assign li_req    = {12'h0, bufr_empty, bufr_done, bufr_full, bufr_ovr};
+
+  /*****************************************************************************************/
+  /* external boot                                                                         */
+  /*****************************************************************************************/
+
+`ifdef BOOT_FROM_AUX_UART
+
+  wire [7:0] aux_uart_byte_data;
+  wire       aux_uart_byte_valid;
+
+  boot_uart_receiver
+  # (
+    .clk_frequency ( `CLK_FREQUENCY )
+  )
+  BOOT_UART_RECEIVER
+  (
+    .clk        ( clk                 ),
+    .reset      ( ~ resetb            ),
+    .rx         ( aux_uart_rx         ),
+    .byte_valid ( aux_uart_byte_valid ),
+    .byte_data  ( aux_uart_byte_data  )
+  );
+
+  wire        boot_valid;
+  wire [31:0] boot_address;
+  wire [31:0] boot_data;   
+  wire        boot_busy;
+  wire        boot_error;
+
+  boot_hex_parser
+  # (
+    .address_width      ( $clog (4096)   ),
+    .data_width         ( 32             ),
+    .clk_frequency      ( `CLK_FREQUENCY ),
+    .timeout_in_seconds ( 1              )
+  )
+  BOOT_HEX_PARSER
+  (
+    .clk          ( clk                 ),
+    .reset        ( ~ resetb            ),
+
+    .in_valid     ( aux_uart_byte_valid ),
+    .in_char      ( aux_uart_byte_data  ),
+
+    .out_valid    ( boot_valid          ),
+    .out_address  ( boot_address        ),
+    .out_data     ( boot_data           ),
+
+    .busy         ( boot_busy           ),
+    .error        ( boot_error          )
+  );
+
+  /* Put muxes for the signals here
+  wire resetb_with_boot = ~ (~ resetb | boot_busy);
+  wire        muxed_boot_valid;
+  wire [31:0] boot_address;
+  wire [31:0] boot_data;   
+  */
+`else
+`endif
 
   /*****************************************************************************************/
   /* processor                                                                             */

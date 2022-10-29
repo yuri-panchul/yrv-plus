@@ -130,19 +130,4 @@ module inst_mem  (mem_rdata, clk, mem_addr, mem_addr_reg, mem_ble_reg, mem_ready
 
 `endif  // SERIES7_VERSION
 
-`ifdef INTEL_VERSION
-  /*****************************************************************************************/
-  /* Intel FPGA / former Altera memory                                                     */
-  /*****************************************************************************************/
-
-  /* Currently - read only                                                                 */
-  
-  reg [31:0] rom[0:255];
-
-  initial $readmemh("code_demo.mem", rom);
-
-  assign mem_rdata = rom[mem_addr_reg[9:2]];
-
-`endif  // INTEL_VERSION
-
   endmodule

@@ -7,8 +7,8 @@ module boot_uart_receiver
     input              clk,
     input              reset,
     input              rx,
-    output logic [7:0] byte_data,
-    output             byte_valid
+    output             byte_valid,
+    output logic [7:0] byte_data
 );
 
     parameter clk_cycles_in_symbol = clk_frequency / baud_rate;
@@ -82,14 +82,16 @@ module boot_uart_receiver
                 shifted_1 <= 8'b10000000;
             else
                 shifted_1 <= shifted_1 >> 1;
-
-            byte_data <= { rx, byte_data [7:1] };
         end
         else if (byte_valid)
         begin
             shifted_1 <= 0;
         end
     end
+
+    always @ (posedge clk)
+        if (shift)
+            byte_data <= { rx, byte_data [7:1] };
 
     logic idle, idle_r;
 

@@ -1,4 +1,6 @@
 `define INTEL_VERSION
+`define CLK_FREQUENCY (50 * 1000 * 1000)
+
 `include "yrv_mcu.v"
 
 module top
@@ -16,7 +18,9 @@ module top
 
   output             hsync,
   output             vsync,
-  output       [2:0] rgb
+  output       [2:0] rgb,
+
+  input              uart_rx
 );
 
   //--------------------------------------------------------------------------
