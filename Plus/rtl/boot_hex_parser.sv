@@ -10,12 +10,12 @@ module boot_hex_parser
     input                              clk,
     input                              reset,
 
-    input        [char_width    - 1:0] in_char,
     input                              in_valid,
+    input        [char_width    - 1:0] in_char,
 
-    output       [address_width - 1:0] out_address,
-    output       [data_width    - 1:0] out_data,
     output logic                       out_valid,
+    output logic [address_width - 1:0] out_address,
+    output logic [data_width    - 1:0] out_data,
 
     output                             busy,
     output logic                       error
@@ -52,9 +52,9 @@ module boot_hex_parser
 
     localparam nibble_width = 4;
 
-    logic  [nibble_width - 1:0] nibble;
-    logic  nibble_valid;
-    logic  nibble_error;
+    logic [nibble_width - 1:0] nibble;
+    logic nibble_valid;
+    logic nibble_error;
 
     always @*
     begin
@@ -108,6 +108,12 @@ module boot_hex_parser
             out_valid <= '0;
         else
             out_valid <= nibble_counter == num_nibbles_in_data - 1;
+
+    always_ff @ (posedge clk or posedge reset)
+        if (reset)
+            out_address <= '0;
+        else if (nibble_valid)
+            out_address <= out_address + 1'd1;
 
     always_ff @ (posedge clk)
         if (nibble_valid)
