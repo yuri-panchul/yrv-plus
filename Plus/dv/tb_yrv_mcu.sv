@@ -27,31 +27,33 @@
 
 module tb_yrv_mcu;
 
-  logic        clk;         // cpu clock
-  logic        ei_req;      // external int request
-  logic        nmi_req;     // non-maskable interrupt
-  logic        resetb;      // master reset
-  logic        ser_rxd;     // receive data input
-  logic [15:0] port4_in;    // port 4
-  logic [15:0] port5_in;    // port 5
+  logic        clk;          // cpu clock
+  logic        ei_req;       // external int request
+  logic        nmi_req;      // non-maskable interrupt
+  logic        resetb;       // master reset
+  logic        ser_rxd;      // receive data input
+  logic [15:0] port4_in;     // port 4
+  logic [15:0] port5_in;     // port 5
 
-  wire         debug_mode;  // in debug mode
-  wire         ser_clk;     // serial clk output (cks mode)
-  wire         ser_txd;     // transmit data output
-  wire         wfi_state;   // waiting for interrupt
-  wire  [15:0] port0_reg;   // port 0
-  wire  [15:0] port1_reg;   // port 1
-  wire  [15:0] port2_reg;   // port 2
-  wire  [15:0] port3_reg;   // port 3
+  wire         debug_mode;   // in debug mode
+  wire         ser_clk;      // serial clk output (cks mode)
+  wire         ser_txd;      // transmit data output
+  wire         wfi_state;    // waiting for interrupt
+  wire  [15:0] port0_reg;    // port 0
+  wire  [15:0] port1_reg;    // port 1
+  wire  [15:0] port2_reg;    // port 2
+  wire  [15:0] port3_reg;    // port 3
 
-  wire         mem_ready;   // memory ready
-  wire  [31:0] mem_rdata;   // memory read data
-  wire         mem_lock;    // memory lock (rmw)
-  wire         mem_write;   // memory write enable
-  wire   [1:0] mem_trans;   // memory transfer type
-  wire   [3:0] mem_ble;     // memory byte lane enables
-  wire  [31:0] mem_addr;    // memory address
-  wire  [31:0] mem_wdata;   // memory write data
+  wire         mem_ready;    // memory ready
+  wire  [31:0] mem_rdata;    // memory read data
+  wire         mem_lock;     // memory lock (rmw)
+  wire         mem_write;    // memory write enable
+  wire   [1:0] mem_trans;    // memory transfer type
+  wire   [3:0] mem_ble;      // memory byte lane enables
+  wire  [31:0] mem_addr;     // memory address
+  wire  [31:0] mem_wdata;    // memory write data
+
+  wire         aux_uart_rx;  // auxiliary uart receive pin
 
   yrv_mcu i_yrv_mcu (.*);
 

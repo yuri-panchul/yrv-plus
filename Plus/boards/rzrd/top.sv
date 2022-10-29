@@ -101,7 +101,7 @@ module top
 
   //--------------------------------------------------------------------------
 
-  assign abcdefgh_from_mcu =
+  wire [7:0] abcdefgh_from_mcu =
   ~ {
     port0_reg[6],
     port0_reg[5],
@@ -113,7 +113,7 @@ module top
     port0_reg[7] 
   };
 
-  assign digit_from_mcu =
+  wire [3:0] digit_from_mcu =
   ~ {
     port1_reg [0],
     port1_reg [1],

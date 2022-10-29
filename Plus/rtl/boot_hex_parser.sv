@@ -23,7 +23,7 @@ module boot_hex_parser
     //------------------------------------------------------------------------
 
     localparam timeout_in_clk_cycles = timeout_in_seconds * clk_frequency;
-    logic [timeout_counter_width - 1:0] timout_counter;
+    logic [$clog2 (timeout_in_clk_cycles) - 1:0] timeout_counter;
 
     always_ff @ (posedge clk or posedge reset)
         if (reset)
@@ -34,7 +34,7 @@ module boot_hex_parser
             timeout_counter <= timeout_counter - 1'd1;
 
     wire timeout = (timeout_counter == '0);
-    wire busy    = ~ valid;
+    assign busy    = ~ timeout;
 
     //------------------------------------------------------------------------
 
@@ -62,13 +62,13 @@ module boot_hex_parser
        nibble_valid = '1;
        nibble_error = '0;
 
-       if (char_data >= CHAR_0 && char_data <= CHAR_9)
-           nibble = char_data - CHAR_0;
-       else if (char_data >= CHAR_a && char_data <= CHAR_a)
-           nibble = char_data - CHAR_a + 10;
-       else if (char_data >= CHAR_A && char_data <= CHAR_F)
-           nibble = char_data - CHAR_A + 10;
-       else if (char_data == CHAR_CR | char_data == CHAR_LF)
+       if (in_char >= CHAR_0 && in_char <= CHAR_9)
+           nibble = in_char - CHAR_0;
+       else if (in_char >= CHAR_a && in_char <= CHAR_a)
+           nibble = in_char - CHAR_a + 10;
+       else if (in_char >= CHAR_A && in_char <= CHAR_F)
+           nibble = in_char - CHAR_A + 10;
+       else if (in_char == CHAR_CR | in_char == CHAR_LF)
            nibble_valid = '0;
        else
        begin

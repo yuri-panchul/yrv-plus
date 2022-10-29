@@ -47,6 +47,9 @@
 module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk, ser_txd,
                  wfi_state, clk, ei_req, nmi_req, port4_in, port5_in, resetb, ser_rxd
 
+                 `ifdef BOOT_FROM_AUX_UART
+                 , aux_uart_rx
+                 `endif
                  `ifdef EXPOSE_MEM_BUS
                  , mem_ready, mem_rdata, mem_lock, mem_write, mem_trans, mem_ble,
                  mem_addr, mem_wdata
@@ -69,7 +72,6 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
   output [15:0] port1_reg;                                 /* port 1                       */
   output [15:0] port2_reg;                                 /* port 2                       */
   output [15:0] port3_reg;                                 /* port 3                       */
-
 
 `ifdef BOOT_FROM_AUX_UART
   input         aux_uart_rx;                               /* auxiliary uart receive pin   */
@@ -169,10 +171,10 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
 
   boot_hex_parser
   # (
-    .address_width      ( $clog (4096)   ),
-    .data_width         ( 32             ),
-    .clk_frequency      ( `CLK_FREQUENCY ),
-    .timeout_in_seconds ( 1              )
+    .address_width      ( $clog2 (4096)   ),
+    .data_width         ( 32              ),
+    .clk_frequency      ( `CLK_FREQUENCY  ),
+    .timeout_in_seconds ( 1               )
   )
   BOOT_HEX_PARSER
   (
