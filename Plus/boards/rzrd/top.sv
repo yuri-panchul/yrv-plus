@@ -20,7 +20,7 @@ module top
   output             vsync,
   output       [2:0] rgb,
 
-  input              uart_rx
+  input              rx
 );
 
   //--------------------------------------------------------------------------
