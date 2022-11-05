@@ -113,7 +113,7 @@ module boot_hex_parser
         if (reset)
             out_address <= '0;
         else if (out_valid)
-            out_address <= out_address + 1'd1;
+            out_address <= out_address + num_nibbles_in_data / 2;
 
     always_ff @ (posedge clk)
         if (nibble_valid)
