@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ./x_setup.bash
+. ./x_setup_source.bash
 
 is_command_available_or_error quartus_pgm " from Intel FPGA Quartus II package"
 
