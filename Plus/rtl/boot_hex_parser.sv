@@ -58,23 +58,20 @@ module boot_hex_parser
 
     always @*
     begin
-       nibble       = '0;
-       nibble_valid = '1;
+       nibble       = in_char - CHAR_0;
+       nibble_valid = in_valid;
        nibble_error = '0;
 
        if (in_char >= CHAR_0 && in_char <= CHAR_9)
-           nibble = in_char - CHAR_0;
-       else if (in_char >= CHAR_a && in_char <= CHAR_a)
+           ;
+       else if (in_char >= CHAR_a && in_char <= CHAR_f)
            nibble = in_char - CHAR_a + 10;
        else if (in_char >= CHAR_A && in_char <= CHAR_F)
            nibble = in_char - CHAR_A + 10;
        else if (in_char == CHAR_CR | in_char == CHAR_LF)
            nibble_valid = '0;
        else
-       begin
-           nibble_valid = '0;
-           nibble_error = '1;
-       end
+           nibble_error = in_valid;
     end
 
     //------------------------------------------------------------------------
@@ -95,22 +92,36 @@ module boot_hex_parser
 
     always_ff @ (posedge clk or posedge reset)
         if (reset)
+        begin
             nibble_counter <= '0;
-        else if (timeout | nibble_counter == num_nibbles_in_data - 1)
+        end
+        else if (timeout)
+        begin
             nibble_counter <= '0;
+        end
         else if (nibble_valid)
-            nibble_counter <= nibble_counter + 1'd1;
+        begin
+            if (nibble_counter == num_nibbles_in_data - 1)
+                nibble_counter <= '0;
+            else
+                nibble_counter <= nibble_counter + 1'd1;
+        end
    
     //------------------------------------------------------------------------
 
     always_ff @ (posedge clk or posedge reset)
         if (reset)
             out_valid <= '0;
+        else if (timeout)
+            out_valid <= '0;
         else
-            out_valid <= nibble_counter == num_nibbles_in_data - 1;
+            out_valid <=   nibble_valid
+                         & nibble_counter == num_nibbles_in_data - 1;
 
     always_ff @ (posedge clk or posedge reset)
         if (reset)
+            out_address <= '0;
+        else if (timeout)
             out_address <= '0;
         else if (out_valid)
             out_address <= out_address + num_nibbles_in_data / 2;
