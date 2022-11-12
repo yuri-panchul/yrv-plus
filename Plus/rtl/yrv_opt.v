@@ -28,15 +28,13 @@
 `elsif SERIES7_VERSION
 `elsif INTEL_VERSION
   /* Intel FPGA version also uses generic version settings */
-  // TODO remove comment
-  // `define GENERIC_VERSION
+  `define GENERIC_VERSION
 `else
   `define GENERIC_VERSION
 `endif
 
 `ifndef GENERIC_VERSION
-  // TODO remove comment
-  // `define INSTANCE_REG                                     /* instantiated registers       */
+  `define INSTANCE_REG                                     /* instantiated registers       */
 // `define INSTANCE_ADD                                       /* instantiated adder           */
 // `define INSTANCE_SUB                                       /* instantiated subtractor      */
 // `define INSTANCE_INC                                       /* instantiated incrementer     */

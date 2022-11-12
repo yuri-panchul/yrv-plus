@@ -142,6 +142,28 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
   assign li_req    = {12'h0, bufr_empty, bufr_done, bufr_full, bufr_ovr};
 
   /*****************************************************************************************/
+  /* processor                                                                             */
+  /*****************************************************************************************/
+
+  wire [31:0] top_mem_addr;
+  wire [ 3:0] top_mem_ble;
+  wire [ 1:0] top_mem_trans;
+  wire [31:0] top_mem_wdata;
+  wire        top_mem_write;
+  wire        top_resetb;
+
+  yrv_top YRV     ( .csr_achk(), .csr_addr(), .csr_read(), .csr_wdata(), .csr_write(),
+                    .debug_mode(debug_mode), .ebrk_inst(), .mem_addr(top_mem_addr),
+                    .mem_ble(top_mem_ble), .mem_lock(), .mem_trans(top_mem_trans),
+                    .mem_wdata(top_mem_wdata), .mem_write(top_mem_write), .timer_en(),
+                    .wfi_state(wfi_state), .brk_req(1'b0), .bus_32(bus_32), .clk(clk),
+                    .csr_ok_ext(1'b0), .csr_rdata(32'h0), .dbg_req(1'b0),
+                    .dresetb(resetb), .ei_req(ei_req), .halt_reg(1'b0), .hw_id(10'h0),
+                    .li_req(li_req), .mem_rdata(mcu_rdata), .mem_ready(mem_ready),
+                    .nmi_req(nmi_req), .resetb(top_resetb), .sw_req(1'b0),
+                    .timer_match(1'b0), .timer_rdata(64'h0) );
+
+  /*****************************************************************************************/
   /* external boot                                                                         */
   /*****************************************************************************************/
 
@@ -196,28 +218,37 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
     .error        ( boot_error          )
   );
 
-  /* Put muxes for the signals here
-  wire resetb_with_boot = ~ (~ resetb | boot_busy);
-  wire        muxed_boot_valid;
-  wire [31:0] boot_address;
-  wire [31:0] boot_data;   
-  */
-`else
-`endif
+  reg boot_valid_reg;
 
-  /*****************************************************************************************/
-  /* processor                                                                             */
-  /*****************************************************************************************/
-  yrv_top YRV     ( .csr_achk(), .csr_addr(), .csr_read(), .csr_wdata(), .csr_write(),
-                    .debug_mode(debug_mode), .ebrk_inst(), .mem_addr(mem_addr),
-                    .mem_ble(mem_ble), .mem_lock(), .mem_trans(mem_trans),
-                    .mem_wdata(mem_wdata), .mem_write(mem_write), .timer_en(),
-                    .wfi_state(wfi_state), .brk_req(1'b0), .bus_32(bus_32), .clk(clk),
-                    .csr_ok_ext(1'b0), .csr_rdata(32'h0), .dbg_req(1'b0),
-                    .dresetb(resetb), .ei_req(ei_req), .halt_reg(1'b0), .hw_id(10'h0),
-                    .li_req(li_req), .mem_rdata(mcu_rdata), .mem_ready(mem_ready),
-                    .nmi_req(nmi_req), .resetb(resetb), .sw_req(1'b0), .timer_match(1'b0),
-                    .timer_rdata(64'h0) );
+  always @ (posedge clk)
+    if (~ resetb)
+      boot_valid_reg <= 1'b0;
+    else
+      boot_valid_reg <= boot_valid;
+
+  reg [31:0] boot_data_reg;
+
+  always @ (posedge clk)
+    boot_data_reg <= boot_wdata;
+
+  assign mem_addr   = boot_busy ?       boot_address       : top_mem_addr;
+  assign mem_ble    = boot_busy ? { 4 { boot_valid     } } : top_mem_ble;
+  assign mem_trans  = boot_busy ? { 2 { boot_valid_reg } } : top_mem_trans;
+  assign mem_wdata  = boot_busy ?       boot_data_reg      : top_mem_wdata;
+  assign mem_write  = boot_busy ?       boot_valid         : top_mem_write;
+
+  assitn top_resetb = ~ (~ resetb | boot_busy);
+
+`else
+
+  assign mem_addr   = top_mem_addr;
+  assign mem_ble    = top_mem_ble;
+  assign mem_trans  = top_mem_trans;
+  assign mem_wdata  = top_mem_wdata;
+  assign mem_write  = top_mem_write;
+  assitn top_resetb = resetb;
+
+`endif
 
   /*****************************************************************************************/
   /* 32-bit memory (currently 1k x 32)                                                     */
