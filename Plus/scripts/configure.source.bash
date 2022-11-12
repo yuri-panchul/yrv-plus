@@ -1,6 +1,3 @@
-#!/usr/bin/env bash
-
-set -Eeuxo pipefail  # See the meaning in scripts/README.md
 . $(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/setup.source.bash
 
 is_command_available_or_error quartus_pgm " from Intel FPGA Quartus Prime package"

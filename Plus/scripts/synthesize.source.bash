@@ -1,6 +1,3 @@
-#!/usr/bin/env bash
-
-set -Eeuxo pipefail  # See the meaning in scripts/README.md
 . $(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/setup.source.bash
 
 >top.qpf

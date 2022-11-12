@@ -1,4 +1,3 @@
 #!/usr/bin/env bash
-
 set -Eeuxo pipefail  # See the meaning in scripts/README.md
-. "$(readlink -f $(dirname $0))/../../scripts/synthesize.bash"
+. "$(readlink -f $(dirname $0))/../../scripts/synthesize.source.bash"
