@@ -59,6 +59,21 @@ info ()
 
 #-----------------------------------------------------------------------------
 
+is_command_available ()
+{
+    command -v $1 &> /dev/null
+}
+
+#-----------------------------------------------------------------------------
+
+is_command_available_or_error ()
+{
+    is_command_available $1 ||  \
+        error 1 "program $1$2 is not in the path or cannot be run"
+}
+
+#-----------------------------------------------------------------------------
+
 rtl_dir=../../rtl
 
 if ! [ -d $rtl_dir ]; then
