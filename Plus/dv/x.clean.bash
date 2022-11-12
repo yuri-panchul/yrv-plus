@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-set -ex  # Exit on non-zero status and print each command
-. "$(realpath $(dirname $0))/../scripts/clean.bash"
+set -Eeuxo pipefail  # See the meaning in scripts/README.md
+. "$(readlink -f $(dirname $0))/../scripts/clean.bash"

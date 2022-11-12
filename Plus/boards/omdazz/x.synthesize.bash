@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
 
-set -ex  # Exit on non-zero status and print each command
-
-extra_var=extra_val
-
-. "$(realpath $(dirname $0))/../../scripts/synthesize.bash"
+set -Eeuxo pipefail  # See the meaning in scripts/README.md
+. "$(readlink -f $(dirname $0))/../../scripts/synthesize.bash"
