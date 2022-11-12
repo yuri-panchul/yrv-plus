@@ -5,10 +5,13 @@ set -ex  # Exit on non-zero status and print each command
 script=$(basename $0)
 setup=../scripts/setup.source.bash
 
-   [ -f ../../$setup ] && . ../../$setup \
-|| [ -f    ../$setup ] && .    ../$setup \
-|| [ -f       $setup ] && .       $setup \
-|| (printf "$script: cannot find $setup\n" 1>&2; exit 1)
+  if [ -f ../../$setup ] ; then . ../../$setup
+elif [ -f    ../$setup ] ; then .    ../$setup
+elif [ -f       $setup ] ; then .       $setup
+else
+  printf "$script: cannot find $setup\n" 1>&2
+  exit 1
+fi
 
 #-----------------------------------------------------------------------------
 
