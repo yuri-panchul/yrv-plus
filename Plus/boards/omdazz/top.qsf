@@ -11,7 +11,7 @@ set_global_assignment   -name SEARCH_PATH               ..
 set_global_assignment   -name SEARCH_PATH               ../../../rtl
 set_global_assignment   -name VERILOG_FILE              top.sv
 set_global_assignment   -name VERILOG_FILE              display_dynamic.sv
-set_global_assignment   -name SDC_FILE                  top.sdc
+set_global_assignment   -name SDC_FILE                  ../top.sdc
 
 source top_extra.qsf
 
