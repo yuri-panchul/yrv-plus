@@ -1,7 +1,0 @@
-#!/bin/bash
-
-rm -rf run
-mkdir run
-cd run
-
-cp ../../../rtl/*.mem ../../../scripts/*.* ../*.* .
