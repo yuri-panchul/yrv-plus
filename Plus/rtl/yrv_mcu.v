@@ -229,7 +229,7 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
   reg [31:0] boot_data_reg;
 
   always @ (posedge clk)
-    boot_data_reg <= boot_wdata;
+    boot_data_reg <= boot_data;
 
   assign mem_addr   = boot_busy ?       boot_address       : top_mem_addr;
   assign mem_ble    = boot_busy ? { 4 { boot_valid     } } : top_mem_ble;
