@@ -57,7 +57,7 @@ module tb_yrv_mcu;
   wire  [31:0] mem_addr;     // memory address
   wire  [31:0] mem_wdata;    // memory write data
 
-  wire         aux_uart_rx;  // auxiliary uart receive pin
+  logic        aux_uart_rx;  // auxiliary uart receive pin
 
   yrv_mcu i_yrv_mcu (.*);
 
@@ -76,11 +76,12 @@ module tb_yrv_mcu;
 
   task init;
 
-    ei_req   <= '0;  // external int request
-    nmi_req  <= '0;  // non-maskable interrupt
-    ser_rxd  <= '0;  // receive data input
-    port4_in <= '0;  // port 4
-    port5_in <= '0;  // port 5
+    ei_req      <= '0;  // external int request
+    nmi_req     <= '0;  // non-maskable interrupt
+    ser_rxd     <= '0;  // receive data input
+    port4_in    <= '0;  // port 4
+    port5_in    <= '0;  // port 5
+    aux_uart_rx <= '0;  // auxiliary uart receive pin
 
   endtask
 
