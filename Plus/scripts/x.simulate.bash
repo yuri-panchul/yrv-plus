@@ -3,7 +3,7 @@
 set -ex  # Exit on non-zero status and print each command
 
 script=$(basename $0)
-setup=scripts/x.setup.source.bash
+setup=scripts/setup.source.bash
 
    [ -f ../../$setup ] && . ../../$setup \
 || [ -f    ../$setup ] && .    ../$setup \
@@ -27,7 +27,7 @@ vvp a.out 2>&1 | tee "$log"
 gtkwave_script=
 
 if [ -f ../xx_gtkwave.tcl ]; then
-  gtkwave_script="--script ../xx_gtkwave.tcl"
+  gtkwave_script="--script ../xgtkwave.tcl"
 fi
 
 gtkwave dump.vcd $gtkwave_script

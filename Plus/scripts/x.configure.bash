@@ -3,7 +3,7 @@
 set -ex  # Exit on non-zero status and print each command
 
 script=$(basename $0)
-setup=scripts/x.setup.source.bash
+setup=scripts/setup.source.bash
 
    [ -f ../../$setup ] && . ../../$setup \
 || [ -f    ../$setup ] && .    ../$setup \
