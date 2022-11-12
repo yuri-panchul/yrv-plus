@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+# See the decription of these settings in scripts/README.md file
+set -Eeuxo pipefail
+
+aaa=yyy
+. "$(dirname $0)/../scripts/setup.source.bash"
+#. "$(dirname $0)/../scripts/setup.source.bash"
+exit
+
 hex_file=code_demo.mem
 
 script_path="$0"
