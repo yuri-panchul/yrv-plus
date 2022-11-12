@@ -169,12 +169,16 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
   wire        boot_busy;
   wire        boot_error;
 
+  localparam boot_address_width = $clog2 (4096);
+  wire [boot_address_width - 1:0] boot_address_narrow;
+  assign boot_address = 32' (boot_address_narrow);
+
   boot_hex_parser
   # (
-    .address_width      ( $clog2 (4096)   ),
-    .data_width         ( 32              ),
-    .clk_frequency      ( `CLK_FREQUENCY  ),
-    .timeout_in_seconds ( 1               )
+    .address_width      ( boot_address_width ),
+    .data_width         ( 32                 ),
+    .clk_frequency      ( `CLK_FREQUENCY     ),
+    .timeout_in_seconds ( 1                  )
   )
   BOOT_HEX_PARSER
   (
@@ -185,7 +189,7 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
     .in_char      ( aux_uart_byte_data  ),
 
     .out_valid    ( boot_valid          ),
-    .out_address  ( boot_address        ),
+    .out_address  ( boot_address_narrow ),
     .out_data     ( boot_data           ),
 
     .busy         ( boot_busy           ),

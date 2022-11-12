@@ -25,6 +25,10 @@
 
 `timescale 1 ns / 100 ps
 
+`define CLK_FREQUENCY (50 * 1000 * 1000)
+
+`include "yrv_mcu.v"
+
 module tb_yrv_mcu;
 
   logic        clk;          // cpu clock
