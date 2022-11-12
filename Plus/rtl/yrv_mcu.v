@@ -237,7 +237,7 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
   assign mem_wdata  = boot_busy ?       boot_data_reg      : top_mem_wdata;
   assign mem_write  = boot_busy ?       boot_valid         : top_mem_write;
 
-  assitn top_resetb = ~ (~ resetb | boot_busy);
+  assign top_resetb = ~ (~ resetb | boot_busy);
 
 `else
 
@@ -246,7 +246,7 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
   assign mem_trans  = top_mem_trans;
   assign mem_wdata  = top_mem_wdata;
   assign mem_write  = top_mem_write;
-  assitn top_resetb = resetb;
+  assign top_resetb = resetb;
 
 `endif
 
