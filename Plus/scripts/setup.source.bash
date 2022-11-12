@@ -1,3 +1,7 @@
+setup_source_bash_already_run=1
+
+#-----------------------------------------------------------------------------
+
 script=$(basename "$0")
 log="$PWD/log.txt"
 

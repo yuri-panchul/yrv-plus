@@ -1,4 +1,5 @@
-. $(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/setup.source.bash
+scripts_dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+. "$scripts_dir/setup.source.bash"
 
 >top.qpf
 cp $rtl_dir/*.mem ../*.qsf .
@@ -11,4 +12,4 @@ then
     error 1 "synthesis failed"
 fi
 
-./x.configure.bash
+. "$scripts_dir/configure.source.bash"
