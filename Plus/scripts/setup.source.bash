@@ -97,7 +97,7 @@ then
   QUESTA_BIN_DIR=bin
   QUESTA_LIB_DIR=linux_x86_64
 
-  if [ -z "$LM_LICENSE_FILE" ]
+  if [ -z "${LM_LICENSE_FILE-}" ]
   then
     export LM_LICENSE_FILE=$HOME/flexlm/license.dat
   fi
@@ -112,7 +112,7 @@ then
   QUESTA_BIN_DIR=win64
   QUESTA_LIB_DIR=win64
 
-  if [ -z "$LM_LICENSE_FILE" ]
+  if [ -z "{$LM_LICENSE_FILE-}" ]
   then
     export LM_LICENSE_FILE=/c/flexlm/license.dat
   fi
@@ -155,14 +155,14 @@ fi
 
 export QUESTA_ROOTDIR="$FIRST_VERSION_DIR/$QUESTA_DIR"
 
-if [ -z "$PATH" ]
+if [ -z "${PATH-}" ]
 then
     export PATH="$QUESTA_ROOTDIR/$QUESTA_BIN_DIR"
 else
     export PATH="$PATH:$QUESTA_ROOTDIR/$QUESTA_BIN_DIR"
 fi
 
-if [ -z "$LD_LIBRARY_PATH" ]
+if [ -z "${LD_LIBRARY_PATH-}" ]
 then
     export LD_LIBRARY_PATH="$QUESTA_ROOTDIR/$QUESTA_LIB_DIR"
 else

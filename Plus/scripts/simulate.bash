@@ -24,10 +24,11 @@ vvp a.out 2>&1 | tee "$log"
 
 #-----------------------------------------------------------------------------
 
-gtkwave_script=
+gtkwave_script=../xx.gtkwave.tcl
+gtkwave_options=
 
-if [ -f ../xx_gtkwave.tcl ]; then
-  gtkwave_script="--script ../xgtkwave.tcl"
+if [ -f $gtkwave_script ]; then
+  gtkwave_options="--script $gtkwave_script"
 fi
 
-gtkwave dump.vcd $gtkwave_script
+gtkwave dump.vcd $gtkwave_options
