@@ -2,11 +2,11 @@
 
 program=program.mem
 
-   cp "../${hex_file:=code_demo.1mem}" $program  \
-|| cp "$rtl_dir/$hex_file"             $program  \
-                                                 \
-|| error "Cannot find \"$hex_file\""             \
-         "neither in $(readlink -f ..)"          \
+   cp "../${hex_file:=code_demo.mem}" $program  \
+|| cp "$rtl_dir/$hex_file"            $program  \
+                                                \
+|| error "Cannot find \"$hex_file\""            \
+         "neither in $(readlink -f ..)"         \
          "nor in $(readlink -f $rtl_dir)"
 
 # id
