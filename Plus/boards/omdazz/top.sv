@@ -101,7 +101,7 @@ module top
   // Pin assignments
 
   // The original board had port3_reg [13:8], debug_mode, wfi_state
-  assign led = port3_reg [11:8];
+  assign led = mem_ble; // port3_reg [11:8];
 
   //--------------------------------------------------------------------------
 

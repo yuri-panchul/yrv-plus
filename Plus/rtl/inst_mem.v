@@ -140,7 +140,7 @@ module inst_mem  (mem_rdata, clk, mem_addr, mem_addr_reg, mem_ble_reg, mem_ready
  
   reg [31:0] rom[0:255];
 
-  initial $readmemh("code_demo.mem", rom);
+  initial $readmemh("code_demo.mem32", rom);
 
   assign mem_rdata = rom[mem_addr_reg[9:2]];
 

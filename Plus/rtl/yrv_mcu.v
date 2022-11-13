@@ -274,7 +274,7 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
     if (mem_wr_byte[0]) mcu_mem[{mem_addr_reg[11:2], 2'b00}] <= mem_wdata[7:0];
     end
 
-initial $readmemh("code_demo.mem", mcu_mem);
+initial $readmemh("code_demo.mem8", mcu_mem);
 
 `endif
 
