@@ -43,8 +43,36 @@
 `endif
 
 `ifdef INTEL_VERSION
-  //`define BOOT_FROM_AUX_UART
+  `define BOOT_FROM_AUX_UART
   `define EXPOSE_MEM_BUS
+`endif
+
+/*******************************************************************************************/
+/* simulators                                                                              */
+/*******************************************************************************************/
+
+`ifdef VCS
+  // Synopsys VCS
+`elsif INCA
+  // Cadence NC-Verilog, IUS and Xcelium
+`elsif MODEL_TECH
+  // Mentor Graphics / Siemens EDA - ModelSim / Questa
+`elsif __ICARUS__
+  // Icarus Verilog http://iverilog.icarus.com
+`elsif VERILATOR
+  // Verilator https://www.veripool.org/wiki/verilator
+`elsif XILINX_ISIM
+  // Xilinx ISE Simulator
+`elsif XILINX_SIMULATOR
+  // Xilinx Vivado Simulator
+`elsif Veritak
+  // Veritak http://www.sugawara-systems.com
+`else
+  `define NO_SIMULATION
+`endif
+
+`ifndef NO_SIMULATION
+  `define SIMULATION
 `endif
 
 /*******************************************************************************************/

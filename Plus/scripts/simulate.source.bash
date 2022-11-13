@@ -2,8 +2,11 @@
 
 #-----------------------------------------------------------------------------
 
-   cp "../${hex_file:=code_demo.mem}" . \
-|| cp "../../rtl/$hex_file"            .
+if [ -n "${hex_file-}" ]; then
+  cp "$hex_file" .
+else
+  cp "$rtl_dir"/code_demo.mem* .
+fi
 
 iverilog -g2005-sv  \
     -D INTEL_VERSION  \

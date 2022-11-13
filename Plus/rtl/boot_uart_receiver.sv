@@ -11,7 +11,7 @@ module boot_uart_receiver
     output logic [7:0] byte_data
 );
 
-    parameter clk_cycles_in_symbol = clk_frequency / baud_rate;
+    localparam clk_cycles_in_symbol = clk_frequency / baud_rate;
 
     // Synchronize rx input to clk
 
