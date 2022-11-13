@@ -2,7 +2,7 @@ scripts_dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
 . "$scripts_dir/setup.source.bash"
 
 >top.qpf
-cp $rtl_dir/*.mem ../*.qsf .
+cp $rtl_dir/*.mem8 ../*.qsf .
 
 is_command_available_or_error quartus_sh " from Intel FPGA Quartus Prime package"
 

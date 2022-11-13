@@ -1,9 +1,9 @@
 . $(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/setup.source.bash
 
-program=program.mem
+program=program.mem8
 
-   cp "../${hex_file:=code_demo.mem}" $program &> /dev/null \
-|| cp "$rtl_dir/$hex_file"            $program &> /dev/null \
+   cp "../${hex_file:=code_demo.mem8}" $program &> /dev/null \
+|| cp "$rtl_dir/$hex_file"             $program &> /dev/null \
 \
 || error "Cannot find \"$hex_file\""       \
          "neither in $(readlink -f ..)"    \

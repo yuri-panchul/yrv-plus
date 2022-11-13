@@ -79,7 +79,7 @@ module top
 
   // Auxiliary UART receive pin
 
-  wire         aux_uart_rx;
+  wire         aux_uart_rx = rx;
 
   // Exposed memory bus for debug purposes
 

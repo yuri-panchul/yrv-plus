@@ -232,7 +232,10 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
     boot_data_reg <= boot_data;
 
   assign mem_addr   = boot_busy ?       boot_address       : top_mem_addr;
-  assign mem_ble    = boot_busy ? { 4 { boot_valid     } } : top_mem_ble;
+
+  //assign mem_ble    = boot_busy ? { 4 { boot_valid     } } : top_mem_ble;
+  assign mem_ble = { aux_uart_byte_valid, boot_valid, busy, error };
+
   assign mem_trans  = boot_busy ? { 2 { boot_valid_reg } } : top_mem_trans;
   assign mem_wdata  = boot_busy ?       boot_data_reg      : top_mem_wdata;
   assign mem_write  = boot_busy ?       boot_valid         : top_mem_write;
