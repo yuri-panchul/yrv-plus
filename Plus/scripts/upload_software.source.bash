@@ -2,8 +2,8 @@
 
 program=program.mem
 
-   cp "../${hex_file:=code_demo.mem}" $program &> /dev/null \
-|| cp "$rtl_dir/$hex_file"             $program &> /dev/null \
+   cp "../${hex_file:=code_demo.mem32}" $program &> /dev/null \
+|| cp "$rtl_dir/$hex_file"              $program &> /dev/null \
 \
 || error "Cannot find \"$hex_file\""       \
          "neither in $(readlink -f ..)"    \
