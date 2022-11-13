@@ -13,20 +13,8 @@ cd run
 
 error ()
 {
-    ec=$1
-    shift
-
-    [ $ec != 0 ] || return
-
-    printf "$script: error: $*" 1>&2
-    
-    if [ $ec != 1 ]
-    then
-        printf ". Exiting with code $ec." 1>&2
-    fi
-    
-    printf "\n" 1>&2
-    exit $ec
+    printf "$script: error: $*\n" 1>&2
+    exit 1
 }
 
 #-----------------------------------------------------------------------------
@@ -55,7 +43,7 @@ is_command_available ()
 is_command_available_or_error ()
 {
     is_command_available $1 ||  \
-        error 1 "program $1$2 is not in the path or cannot be run"
+        error "program $1$2 is not in the path or cannot be run"
 }
 
 #-----------------------------------------------------------------------------
@@ -67,7 +55,7 @@ if ! [ -d $rtl_dir ]; then
 fi
 
 if ! [ -d $rtl_dir ]; then
-    error 1 "cannot find rtl directory"
+    error "cannot find rtl directory"
 fi
 
 #-----------------------------------------------------------------------------
@@ -105,13 +93,13 @@ then
 
     QUARTUS_BIN_DIR=bin64
 else
-    error 1 "this script does not support your OS '$OSTYPE'"
+    error "this script does not support your OS '$OSTYPE'"
 fi
 
 if ! [ -d "$INTELFPGA_INSTALL_PARENT_DIR/$INTELFPGA_INSTALL_DIR" ]
 then
-    error 1 "expected to find '$INTELFPGA_INSTALL_DIR' directory"  \
-            " in '$INTELFPGA_INSTALL_PARENT_DIR'"
+    error "expected to find '$INTELFPGA_INSTALL_DIR' directory"  \
+          " in '$INTELFPGA_INSTALL_PARENT_DIR'"
 fi
 
 #-----------------------------------------------------------------------------
@@ -133,8 +121,8 @@ FIRST_VERSION_DIR=$($FIND_COMMAND -quit)
 
 if [ -z "$FIRST_VERSION_DIR" ]
 then
-    error 1 "cannot find any version of Intel FPGA installed in "  \
-            "'$INTELFPGA_INSTALL_PARENT_DIR/$INTELFPGA_INSTALL_DIR'"
+    error "cannot find any version of Intel FPGA installed in "  \
+          "'$INTELFPGA_INSTALL_PARENT_DIR/$INTELFPGA_INSTALL_DIR'"
 fi
 
 #-----------------------------------------------------------------------------
@@ -173,15 +161,15 @@ then
     info "PATH=$PATH"
     info "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
 
-                     [ -d "$QUESTA_ROOTDIR" ]  \
-    || error 1 "directory '$QUESTA_ROOTDIR' expected"
+                   [ -d "$QUESTA_ROOTDIR" ]  \
+    || error "directory '$QUESTA_ROOTDIR' expected"
 
-                     [ -d "$QUESTA_ROOTDIR/$QUESTA_BIN_DIR" ]  \
-    || error 1 "directory '$QUESTA_ROOTDIR/$QUESTA_BIN_DIR' expected"
+                   [ -d "$QUESTA_ROOTDIR/$QUESTA_BIN_DIR" ]  \
+    || error "directory '$QUESTA_ROOTDIR/$QUESTA_BIN_DIR' expected"
 
-                     [ -d "$QUARTUS_ROOTDIR" ]  \
-    || error 1 "directory '$QUARTUS_ROOTDIR' expected"
+                   [ -d "$QUARTUS_ROOTDIR" ]  \
+    || error "directory '$QUARTUS_ROOTDIR' expected"
 
-                     [ -d "$QUARTUS_ROOTDIR/$QUARTUS_BIN_DIR" ]  \
-    || error 1 "directory '$QUARTUS_ROOTDIR/$QUARTUS_BIN_DIR' expected"
+                   [ -d "$QUARTUS_ROOTDIR/$QUARTUS_BIN_DIR" ]  \
+    || error "directory '$QUARTUS_ROOTDIR/$QUARTUS_BIN_DIR' expected"
 fi
