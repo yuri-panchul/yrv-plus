@@ -2,7 +2,7 @@
 
 #-----------------------------------------------------------------------------
 
-   cp "../${hex_file:=code_demo.mem8}" . \
+   cp "../${hex_file:=code_demo.mem}" . \
 || cp "../../rtl/$hex_file"            .
 
 iverilog -g2005-sv  \

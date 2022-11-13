@@ -18,9 +18,12 @@ module top
 
   output             hsync,
   output             vsync,
-  output       [2:0] rgb,
+  output       [2:0] rgb
 
+  `ifdef BOOT_FROM_AUX_UART
+  ,
   input              rx
+  `endif
 );
 
   //--------------------------------------------------------------------------
@@ -79,7 +82,9 @@ module top
 
   // Auxiliary UART receive pin
 
+  `ifdef BOOT_FROM_AUX_UART
   wire         aux_uart_rx = rx;
+  `endif
 
   // Exposed memory bus for debug purposes
 

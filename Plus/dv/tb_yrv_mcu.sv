@@ -57,7 +57,9 @@ module tb_yrv_mcu;
   wire  [31:0] mem_addr;     // memory address
   wire  [31:0] mem_wdata;    // memory write data
 
+  `ifdef BOOT_FROM_AUX_UART
   logic        aux_uart_rx;  // auxiliary uart receive pin
+  `endif
 
   yrv_mcu i_yrv_mcu (.*);
 
@@ -81,7 +83,10 @@ module tb_yrv_mcu;
     ser_rxd     <= '0;  // receive data input
     port4_in    <= '0;  // port 4
     port5_in    <= '0;  // port 5
+
+    `ifdef BOOT_FROM_AUX_UART
     aux_uart_rx <= '0;  // auxiliary uart receive pin
+    `endif
 
   endtask
 

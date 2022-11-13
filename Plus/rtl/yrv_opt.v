@@ -43,7 +43,7 @@
 `endif
 
 `ifdef INTEL_VERSION
-  `define BOOT_FROM_AUX_UART
+  //`define BOOT_FROM_AUX_UART
   `define EXPOSE_MEM_BUS
 `endif
 
