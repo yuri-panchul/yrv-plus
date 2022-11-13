@@ -1,3 +1,5 @@
+set -x  # Print each command
+
 setup_source_bash_already_run=1
 
 #-----------------------------------------------------------------------------

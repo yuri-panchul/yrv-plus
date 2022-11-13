@@ -1,13 +1,13 @@
 . $(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/setup.source.bash
 
-   cp "../${hex_file:=code_demo.1mem}" .               \
-|| cp "$rtl_dir/$hex_file"            .               \
-                                                      \
-|| error "Cannot find \"$hex_file\""                  \
-         "neither in $(dirname $(readlink -f ..))"    \
-         "nor in $(dirname $(readlink -f $rtl_dir))"
+program=program.mem
 
-exit
+   cp "../${hex_file:=code_demo.1mem}" $program  \
+|| cp "$rtl_dir/$hex_file"             $program  \
+                                                 \
+|| error "Cannot find \"$hex_file\""             \
+         "neither in $(readlink -f ..)"          \
+         "nor in $(readlink -f $rtl_dir)"
 
 # id
 #
@@ -31,9 +31,4 @@ fi
 dev=/dev/ttyUSB0
 
 stty -F $dev raw speed 115200 -crtscts cs8 -parenb -cstopb &> /dev/null
-
-cat 
-for i in {0..300}
-do
-  echo 12345678 > $dev
-done
+cat $program > $dev
