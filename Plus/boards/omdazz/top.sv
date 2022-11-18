@@ -35,11 +35,9 @@ module top
   assign rgb    = 3'b0;
 
   //--------------------------------------------------------------------------
-  // Special buttons
+  // Slow clock button / switch
 
-  wire slow_clk_mode   = ~ key_sw [0];
-  wire show_addr_mode  = slow_clk_mode &   key_sw [1];
-  wire show_rdata_mode = slow_clk_mode & ~ key_sw [1];
+  wire slow_clk_mode = ~ key_sw [0];
 
   //--------------------------------------------------------------------------
   // MCU clock
@@ -97,6 +95,8 @@ module top
   wire  [31:0] mem_addr;    // memory address
   wire  [31:0] mem_wdata;   // memory write data
 
+  wire  [31:0] extra_debug_data;
+
   //--------------------------------------------------------------------------
   // MCU instantiation
 
@@ -135,13 +135,24 @@ module top
   wire [7:0] abcdefgh_from_show_mode;
   wire [3:0] digit_from_show_mode;
 
+  logic [15:0] display_number;
+
+  always_comb
+    casez (key_sw)
+    default : display_number = mem_addr         [15: 0];
+    4'b110? : display_number = mem_rdata        [15: 0];
+    4'b100? : display_number = mem_rdata        [31:16];
+    4'b101? : display_number = extra_debug_data [15: 0];
+    4'b001? : display_number = extra_debug_data [31:16];
+    endcase
+
   display_dynamic # (.n_dig (4)) i_display
   (
-    .clk       (   clk                                   ),
-    .reset     ( ~ reset_n                               ),
-    .number    (   show_addr_mode ? mem_addr : mem_rdata ),
-    .abcdefgh  (   abcdefgh_from_show_mode               ),
-    .digit     (   digit_from_show_mode                  )
+    .clk       (   clk                     ),
+    .reset     ( ~ reset_n                 ),
+    .number    (   display_number          ),
+    .abcdefgh  (   abcdefgh_from_show_mode ),
+    .digit     (   digit_from_show_mode    )
   );
 
   //--------------------------------------------------------------------------

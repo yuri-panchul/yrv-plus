@@ -52,7 +52,7 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
                  `endif
                  `ifdef EXPOSE_MEM_BUS
                  , mem_ready, mem_rdata, mem_lock, mem_write, mem_trans, mem_ble,
-                 mem_addr, mem_wdata
+                 mem_addr, mem_wdata, extra_debug_data
                  `endif
   );
 
@@ -86,6 +86,8 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
   output  [3:0] mem_ble;                                   /* memory byte lane enables     */
   output [31:0] mem_addr;                                  /* memory address               */
   output [31:0] mem_wdata;                                 /* memory write data            */
+
+  output [31:0] extra_debug_data;                          /* extra debug data unconnected */
 `endif
 
   /*****************************************************************************************/
@@ -231,11 +233,11 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
   always @ (posedge clk)
     boot_data_reg <= boot_data;
 
-  assign mem_addr   = boot_busy ?       boot_address       : top_mem_addr;
-  assign mem_ble    = boot_busy ? { 4 { boot_valid     } } : top_mem_ble;
-  assign mem_trans  = boot_busy ? { 2 { boot_valid_reg } } : top_mem_trans;
-  assign mem_wdata  = boot_busy ?       boot_data_reg      : top_mem_wdata;
-  assign mem_write  = boot_busy ?       boot_valid         : top_mem_write;
+  assign mem_addr   = boot_busy ?       boot_address      : top_mem_addr;
+  assign mem_ble    = boot_busy ? { 4 { boot_valid    } } : top_mem_ble;
+  assign mem_trans  = boot_busy ? { 2 { boot_valid    } } : top_mem_trans;
+  assign mem_wdata  = boot_busy ?       boot_data_reg     : top_mem_wdata;
+  assign mem_write  = boot_busy ?       boot_valid        : top_mem_write;
 
   assign top_resetb = ~ (~ resetb | boot_busy);
 
