@@ -33,8 +33,8 @@ module boot_hex_parser
         else if (timeout_counter > '0)
             timeout_counter <= timeout_counter - 1'd1;
 
-    wire timeout = (timeout_counter == '0);
-    assign busy    = ~ timeout;
+    assign busy    = (timeout_counter != '0);
+    wire   timeout = (timeout_counter == 1'd1);
 
     //------------------------------------------------------------------------
 
