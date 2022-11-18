@@ -111,7 +111,7 @@ module top
   //--------------------------------------------------------------------------
 
   wire [7:0] abcdefgh_from_mcu =
-  ~ {
+  {
     port0_reg[6],
     port0_reg[5],
     port0_reg[4],
@@ -123,11 +123,11 @@ module top
   };
 
   wire [3:0] digit_from_mcu =
-  ~ {
-    port1_reg [0],
-    port1_reg [1],
+  {
+    port1_reg [3],
     port1_reg [2],
-    port1_reg [3]
+    port1_reg [1],
+    port1_reg [0]
   };
 
   //--------------------------------------------------------------------------
@@ -169,6 +169,8 @@ module top
       digit    = digit_from_mcu;
     end
 
+  `ifdef OLD_INTERRUPT_CODE
+
   //--------------------------------------------------------------------------
   // 125Hz interrupt
   // 50,000,000 Hz / 125 Hz = 40,000 cycles
@@ -189,6 +191,30 @@ module top
     begin
       hz125_reg <= hz125_lim ? 16'd0 : hz125_reg + 1'b1;
       hz125_lat <= ~ port3_reg [15] & (hz125_lim | hz125_lat);
+    end
+
+  `endif
+
+  //--------------------------------------------------------------------------
+  // 6 KHz interrupt
+  // 50,000,000 Hz / 6 KHz = 8333 cycles
+
+  logic [13:0] khz_reg;
+  logic        khz_lat;
+
+  assign ei_req    = khz_lat;
+  wire   khz_lim = khz_reg == 14'd8332;
+
+  always_ff @ (posedge clk or negedge resetb)
+    if (~ resetb)
+    begin
+      khz_reg <= 14'd0;
+      khz_lat <= 1'b0;
+    end
+    else
+    begin
+      khz_reg <= khz_lim ? 14'd0 : khz_reg + 1'b1;
+      khz_lat <= ~ port3_reg [15] & (khz_lim | khz_lat);
     end
 
 endmodule
