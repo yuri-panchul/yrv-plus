@@ -196,25 +196,25 @@ module top
   `endif
 
   //--------------------------------------------------------------------------
-  // 6 KHz interrupt
-  // 50,000,000 Hz / 6 KHz = 8333 cycles
+  // 8 KHz interrupt
+  // 50,000,000 Hz / 8 KHz = 6250 cycles
 
-  logic [13:0] khz_reg;
-  logic        khz_lat;
+  logic [12:0] khz8_reg;
+  logic        khz8_lat;
 
-  assign ei_req    = khz_lat;
-  wire   khz_lim = khz_reg == 14'd8332;
+  assign ei_req    = khz8_lat;
+  wire   khz8_lim = khz8_reg == 13'd6249;
 
   always_ff @ (posedge clk or negedge resetb)
     if (~ resetb)
     begin
-      khz_reg <= 14'd0;
-      khz_lat <= 1'b0;
+      khz8_reg <= 13'd0;
+      khz8_lat <= 1'b0;
     end
     else
     begin
-      khz_reg <= khz_lim ? 14'd0 : khz_reg + 1'b1;
-      khz_lat <= ~ port3_reg [15] & (khz_lim | khz_lat);
+      khz8_reg <= khz8_lim ? 13'd0 : khz8_reg + 1'b1;
+      khz8_lat <= ~ port3_reg [15] & (khz8_lim | khz8_lat);
     end
 
 endmodule
