@@ -45,7 +45,15 @@ is_command_available ()
 is_command_available_or_error ()
 {
     is_command_available $1 ||  \
-        error "program $1$2 is not in the path or cannot be run"
+        error "program $1$2 is not in the path or cannot be run$3"
+}
+
+#-----------------------------------------------------------------------------
+
+is_command_available_or_error_and_sudo_apt_install ()
+{
+    is_command_available_or_error  \
+        $1 "" ". To install run: sudo apt install $1"
 }
 
 #-----------------------------------------------------------------------------
