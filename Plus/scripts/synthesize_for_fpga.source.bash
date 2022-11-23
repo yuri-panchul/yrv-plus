@@ -7,7 +7,7 @@ cp ../*.qsf .
 if [ -n "${hex_file-}" ]; then
   cp "$hex_file" .
 else
-  cp "$rtl_dir/code_demo.mem32" .
+  cp "$design_dir/code_demo.mem32" .
 fi
 
 is_command_available_or_error quartus_sh " from Intel FPGA Quartus Prime package"

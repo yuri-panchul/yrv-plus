@@ -5,12 +5,12 @@
 if [ -n "${hex_file-}" ]; then
   cp "$hex_file" .
 else
-  cp "$rtl_dir"/code_demo.mem* .
+  cp "$design_dir"/code_demo.mem* .
 fi
 
-iverilog -g2005-sv  \
+iverilog -g2005-sv    \
     -D INTEL_VERSION  \
-    -I $rtl_dir       \
+    -I $design_dir    \
     ../*.sv           \
     2>&1 | tee "$log"
 

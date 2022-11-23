@@ -50,14 +50,14 @@ is_command_available_or_error ()
 
 #-----------------------------------------------------------------------------
 
-rtl_dir=../../rtl
+design_dir=../../design
 
-if ! [ -d $rtl_dir ]; then
-    rtl_dir=../$rtl_dir
+if ! [ -d $design_dir ]; then
+    design_dir=../$design_dir
 fi
 
-if ! [ -d $rtl_dir ]; then
-    error "cannot find rtl directory"
+if ! [ -d $design_dir ]; then
+    error "cannot find design directory"
 fi
 
 #-----------------------------------------------------------------------------
