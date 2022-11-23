@@ -68,6 +68,18 @@ if ! [ -d $design_dir ]; then
     error "cannot find design directory"
 fi
 
+external_dir=$design_dir/../external
+
+if ! [ -d $external_dir ]; then
+    error "cannot find external directory"
+fi
+
+external_dir=$(readlink -f "$external_dir")
+
+if ! [ -d $external_dir ]; then
+    error "external directory path is broken"
+fi
+
 #-----------------------------------------------------------------------------
 
 INTELFPGA_INSTALL_DIR=intelFPGA_lite
