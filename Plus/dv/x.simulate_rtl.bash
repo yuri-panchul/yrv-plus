@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail  # See the meaning in scripts/README.md
-. "$(readlink -f $(dirname $0))/../../scripts/configure.source.bash"
+. "$(readlink -f $(dirname $0))/../scripts/simulate_rtl.source.bash"

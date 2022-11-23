@@ -18,4 +18,4 @@ then
     error "synthesis failed"
 fi
 
-. "$scripts_dir/configure.source.bash"
+. "$scripts_dir/configure_fpga.source.bash"
