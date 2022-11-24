@@ -81,6 +81,14 @@ fi
 
 #-----------------------------------------------------------------------------
 
+scripts_dir=$(readlink -f $design_dir/../scripts)
+
+if ! [ -d "$scripts_dir" ]; then
+    error "scripts directory path \"$scripts_dir\" is broken"
+fi
+
+#-----------------------------------------------------------------------------
+
 INTELFPGA_INSTALL_DIR=intelFPGA_lite
 QUESTA_DIR=questa_fse
 QUARTUS_DIR=quartus
