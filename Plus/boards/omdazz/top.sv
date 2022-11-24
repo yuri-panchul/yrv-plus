@@ -139,11 +139,14 @@ module top
 
   always_comb
     casez (key_sw)
-    default : display_number = mem_addr         [15: 0];
-    4'b110? : display_number = mem_rdata        [15: 0];
-    4'b100? : display_number = mem_rdata        [31:16];
-    4'b101? : display_number = extra_debug_data [15: 0];
-    4'b001? : display_number = extra_debug_data [31:16];
+    default : display_number = mem_addr  [15: 0];
+    4'b110? : display_number = mem_rdata [15: 0];
+    4'b100? : display_number = mem_rdata [31:16];
+    4'b101? : display_number = mem_wdata [15: 0];
+    4'b001? : display_number = mem_wdata [31:16];
+
+    // 4'b101? : display_number = extra_debug_data [15: 0];
+    // 4'b001? : display_number = extra_debug_data [31:16];
     endcase
 
   display_dynamic # (.n_dig (4)) i_display
