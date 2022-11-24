@@ -45,6 +45,7 @@
 `ifdef INTEL_VERSION
   `define BOOT_FROM_AUX_UART
   `define EXPOSE_MEM_BUS
+  // `define RESET_BASE_AND_INT_VECTORS_FOR_RARS
 `endif
 
 /*******************************************************************************************/
@@ -94,7 +95,12 @@
 /* default addresses                                                                       */
 /*******************************************************************************************/
 `define NMI_VECT   32'h00000100                            /* nmi vector            0x0100 */
-`define RST_BASE   31'h00000100                            /* reset start address   0x0200 */
+
+`ifdef RESET_BASE_AND_INT_VECTORS_FOR_RARS
+  `define RST_BASE   31'h00000000                          /* reset start address   0x0000 */
+`else
+  `define RST_BASE   31'h00000100                          /* reset start address   0x0100 */
+`endif
 
 /*******************************************************************************************/
 /* debug options                                                                           */

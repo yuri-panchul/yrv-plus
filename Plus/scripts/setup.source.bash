@@ -68,16 +68,15 @@ if ! [ -d $design_dir ]; then
     error "cannot find design directory"
 fi
 
+#-----------------------------------------------------------------------------
+
 external_dir=$design_dir/../external
+mkdir -p $external_dir
 
-if ! [ -d $external_dir ]; then
-    error "cannot find external directory"
-fi
+external_dir=$(readlink -f $external_dir)
 
-external_dir=$(readlink -f "$external_dir")
-
-if ! [ -d $external_dir ]; then
-    error "external directory path is broken"
+if ! [ -d "$external_dir" ]; then
+    error "external directory path \"$external_dir\" is broken"
 fi
 
 #-----------------------------------------------------------------------------
@@ -195,3 +194,10 @@ then
                    [ -d "$QUARTUS_ROOTDIR/$QUARTUS_BIN_DIR" ]  \
     || error "directory '$QUARTUS_ROOTDIR/$QUARTUS_BIN_DIR' expected"
 fi
+
+#-----------------------------------------------------------------------------
+
+rars=rars1_5.jar
+rars_version=v1.5
+
+rars_path="$external_dir/$rars"
