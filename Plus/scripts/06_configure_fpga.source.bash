@@ -1,5 +1,5 @@
 [ -z "${setup_source_bash_already_run-}" ] && \
-. $(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/setup.source.bash
+. $(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/00_setup.source.bash
 
 is_command_available_or_error quartus_pgm " from Intel FPGA Quartus Prime package"
 

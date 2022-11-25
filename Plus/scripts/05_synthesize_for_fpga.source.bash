@@ -1,5 +1,5 @@
 scripts_dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
-. "$scripts_dir/setup.source.bash"
+. "$scripts_dir/00_setup.source.bash"
 
 >top.qpf
 cp ../*.qsf .

@@ -1,4 +1,4 @@
-. $(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/setup.source.bash
+. $(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/00_setup.source.bash
 
 if ! [ -f "$rars_path"  ]; then
     wget -O "$rars_path" -o wget.log \
