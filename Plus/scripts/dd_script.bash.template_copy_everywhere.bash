@@ -18,7 +18,9 @@ read -p "Are you sure to overwrite all the files above? " -n 1 -r
 printf "\n"
 
 if [[ "$REPLY" =~ ^[Yy]$ ]]; then
-    eval "$find_command" | xargs -n 1 echo cp dd_script.bash.template
+    # -n max-args,  --max-args=max-args
+    # -r,           --no-run-if-empty    (GNU extension)
+    eval "$find_command" | xargs -n 1 -r cp dd_script.bash.template
 else
     printf "$script: nothing is copied\n" 1>&2
     exit 1
