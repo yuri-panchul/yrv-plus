@@ -69,12 +69,18 @@ if ! [ -d $design_dir ]; then
     error "cannot find design directory"
 fi
 
+design_dir=$(readlink -f "$design_dir")
+
+if ! [ -d "$design_dir" ]; then
+    error "design directory path \"$design_dir\" is broken"
+fi
+
 #-----------------------------------------------------------------------------
 
-external_dir=$design_dir/../external
-mkdir -p $external_dir
+external_dir="$design_dir/../external"
+mkdir -p "$external_dir"
 
-external_dir=$(readlink -f $external_dir)
+external_dir=$(readlink -f "$external_dir")
 
 if ! [ -d "$external_dir" ]; then
     error "external directory path \"$external_dir\" is broken"
@@ -82,7 +88,7 @@ fi
 
 #-----------------------------------------------------------------------------
 
-scripts_dir=$(readlink -f $design_dir/../scripts)
+scripts_dir=$(readlink -f "$design_dir/../scripts")
 
 if ! [ -d "$scripts_dir" ]; then
     error "scripts directory path \"$scripts_dir\" is broken"
@@ -210,3 +216,10 @@ rars=rars1_5.jar
 rars_version=v1.5
 
 rars_path="$external_dir/$rars"
+
+#-----------------------------------------------------------------------------
+
+program_mem32=program.mem32
+demo_program_mem32=code_demo.mem32
+
+cp "$design_dir"/code_demo.mem* .

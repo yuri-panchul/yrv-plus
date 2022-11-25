@@ -2,12 +2,6 @@
 
 #-----------------------------------------------------------------------------
 
-if [ -n "${hex_file-}" ]; then
-  cp "$hex_file" .
-else
-  cp "$design_dir"/code_demo.mem* .
-fi
-
 is_command_available_or_error_and_sudo_apt_install iverilog
 
 iverilog -g2005-sv    \
