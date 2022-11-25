@@ -30,7 +30,7 @@ module top
     wire reset = sw [9];
 
     wire [23:0] number_to_display
-        = { key, key, sw, sw };
+        = ~ { key, key, sw, sw };
 
     display_static_digit i_digit_0 ( number_to_display [ 3: 0], hex0 [6:0]);
     display_static_digit i_digit_1 ( number_to_display [ 7: 4], hex1 [6:0]);
