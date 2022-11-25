@@ -115,6 +115,49 @@ module top
   // The original board had port3_reg [13:8], debug_mode, wfi_state
   assign led = { port3_reg [15:8], debug_mode, wfi_state };
 
+  //--------------------------------------------------------------------------
+
+  wire [7:0] abcdefgh_from_mcu
+    = { port0_reg[0], port0_reg[1], port0_reg[2], port0_reg[3],
+        port0_reg[4], port0_reg[5], port0_reg[6], port0_reg[7] };
+
+  assign hex0 = { 8 { port1_reg [0] } } & abcdefgh_from_mcu;
+  assign hex1 = { 8 { port1_reg [1] } } & abcdefgh_from_mcu;
+  assign hex2 = { 8 { port1_reg [2] } } & abcdefgh_from_mcu;
+  assign hex3 = { 8 { port1_reg [3] } } & abcdefgh_from_mcu;
+
+  //--------------------------------------------------------------------------
+
+    display_static_digit i_digit_0 ( number_to_display [ 3: 0], hex0 [6:0]);
+    display_static_digit i_digit_1 ( number_to_display [ 7: 4], hex1 [6:0]);
+    display_static_digit i_digit_2 ( number_to_display [11: 8], hex2 [6:0]);
+    display_static_digit i_digit_3 ( number_to_display [15:12], hex3 [6:0]);
+    display_static_digit i_digit_4 ( number_to_display [19:16], hex4 [6:0]);
+    display_static_digit i_digit_5 ( number_to_display [23:20], hex5 [6:0]);
+
+    assign { hex5 [7], hex4 [7], hex3 [7], hex2 [7], hex1 [7], hex0 [7] }
+        = ~ sw [5:0];
+
+
+  wire [7:0] abcdefgh_from_mcu =
+  {
+    port0_reg[6],
+    port0_reg[5],
+    port0_reg[4],
+    port0_reg[3],
+    port0_reg[2],
+    port0_reg[1],
+    port0_reg[0],
+    port0_reg[7] 
+  };
+
+  wire [3:0] digit_from_mcu =
+  {
+    port1_reg [3],
+    port1_reg [2],
+    port1_reg [1],
+    port1_reg [0]
+  };
 
 
 
@@ -122,11 +165,15 @@ module top
 
 
 
-    `ifdef BOOT_FROM_AUX_UART
-    wire rx = gpio [31];
-    `endif
 
-    assign led  = sw;
+
+
+
+
+
+
+
+
 
     wire [23:0] number_to_display
         = ~ { key, key, sw, sw };
@@ -140,5 +187,53 @@ module top
 
     assign { hex5 [7], hex4 [7], hex3 [7], hex2 [7], hex1 [7], hex0 [7] }
         = ~ sw [5:0];
+
+  `ifdef OLD_INTERRUPT_CODE
+
+  //--------------------------------------------------------------------------
+  // 125Hz interrupt
+  // 50,000,000 Hz / 125 Hz = 40,000 cycles
+
+  logic [15:0] hz125_reg;
+  logic        hz125_lat;
+
+  assign ei_req    = hz125_lat;
+  wire   hz125_lim = hz125_reg == 16'd39999;
+
+  always_ff @ (posedge clk or negedge resetb)
+    if (~ resetb)
+    begin
+      hz125_reg <= 16'd0;
+      hz125_lat <= 1'b0;
+    end
+    else
+    begin
+      hz125_reg <= hz125_lim ? 16'd0 : hz125_reg + 1'b1;
+      hz125_lat <= ~ port3_reg [15] & (hz125_lim | hz125_lat);
+    end
+
+  `endif
+
+  //--------------------------------------------------------------------------
+  // 8 KHz interrupt
+  // 50,000,000 Hz / 8 KHz = 6250 cycles
+
+  logic [12:0] khz8_reg;
+  logic        khz8_lat;
+
+  assign ei_req    = khz8_lat;
+  wire   khz8_lim = khz8_reg == 13'd6249;
+
+  always_ff @ (posedge clk or negedge resetb)
+    if (~ resetb)
+    begin
+      khz8_reg <= 13'd0;
+      khz8_lat <= 1'b0;
+    end
+    else
+    begin
+      khz8_reg <= khz8_lim ? 13'd0 : khz8_reg + 1'b1;
+      khz8_lat <= ~ port3_reg [15] & (khz8_lim | khz8_lat);
+    end
 
 endmodule
