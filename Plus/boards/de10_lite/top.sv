@@ -24,16 +24,22 @@ module top
     inout   [35:0]  gpio
 );
 
-    assign led  = 10'b0;
-
-    assign hex0 = 8'hff;
-    assign hex1 = 8'hff;
-    assign hex2 = 8'hff;
-    assign hex3 = 8'hff;
-    assign hex4 = 8'hff;
-    assign hex5 = 8'hff;
+    assign led  = sw;
 
     wire clk   = max10_clk1_50;
     wire reset = sw [9];
+
+    wire [23:0] number_to_display
+        = { key, key, sw, sw };
+
+    display_static_digit i_digit_0 ( number_to_display [ 3: 0], hex0 [6:0]);
+    display_static_digit i_digit_1 ( number_to_display [ 7: 4], hex1 [6:0]);
+    display_static_digit i_digit_2 ( number_to_display [11: 8], hex2 [6:0]);
+    display_static_digit i_digit_3 ( number_to_display [15:12], hex3 [6:0]);
+    display_static_digit i_digit_4 ( number_to_display [19:16], hex4 [6:0]);
+    display_static_digit i_digit_5 ( number_to_display [23:20], hex5 [6:0]);
+
+    assign { hex5 [7], hex4 [7], hex3 [7], hex2 [7], hex1 [7], hex0 [7] }
+        = ~ sw [5:0];
 
 endmodule
