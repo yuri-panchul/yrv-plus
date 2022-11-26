@@ -52,7 +52,7 @@ module top
   logic [22:0] clk_cnt;
 
   always_ff @ (posedge clk or posedge reset)
-    if (~ reset_n)
+    if (reset)
       clk_cnt <= '0;
     else
       clk_cnt <= clk_cnt + 1'd1;
@@ -61,7 +61,12 @@ module top
     = slow_clk_mode ? clk_cnt [22] : clk;
 
   wire muxed_clk;
-  global i_global (.in (muxed_clk_raw), .out (muxed_clk));
+
+  `ifdef SIMULATION
+    assign muxed_clk = muxed_clk_raw;
+  `else
+    global i_global (.in (muxed_clk_raw), .out (muxed_clk));
+  `endif
 
   //--------------------------------------------------------------------------
   // MCU inputs
@@ -117,7 +122,7 @@ module top
 
   //--------------------------------------------------------------------------
 
-  logic [5:0][7:0] hex_from_mcu;
+  logic [0:5][7:0] hex_from_mcu;
 
   always_ff @ (posedge clk)
     for (int i = 0; i < 4; i ++)
@@ -126,26 +131,46 @@ module top
           <= { port0_reg[0], port0_reg[1], port0_reg[2], port0_reg[3],
                port0_reg[4], port0_reg[5], port0_reg[6], port0_reg[7] };
 
-  assign hex_from_mcu [5:4] = '0;
+  assign hex_from_mcu [4:5] = '0;
 
   //--------------------------------------------------------------------------
 
-  logic [23:0] extra_debug;
+  logic [23:0] display_number;
 
-  wire [5:0][7:0] hex_from_extra_debug;
+  always_comb
+    casez (sw)
+    default        : display_number = mem_addr         [23:0];
+    10'b????????0? : display_number = mem_rdata        [23:0];
+    10'b???????01? : display_number = mem_rdata        [31:8];
+    10'b??????011? : display_number = mem_wdata        [23:0];
+    10'b?????0111? : display_number = mem_wdata        [31:8];
+    10'b????01111? : display_number = extra_debug_data [23:0];
+    10'b???011111? : display_number = extra_debug_data [31:8];
+    endcase
+
+  //--------------------------------------------------------------------------
+
+  wire [0:5][7:0] hex_from_show_mode;
 
   genvar gi;
 
-  for (gi = 0; gi < 6; gi ++)
-  begin : gen 
-    display_static_digit i_digit
-    (
-      extra_debug [i * 4 +: 4],
-      hex_from_extra_debug [i][7:1]
-    );
+  generate
+    for (gi = 0; gi < 6; gi ++)
+    begin : gen
+      display_static_digit i_digit
+      (
+        display_number [gi * 4 +: 4],
+        hex_from_show_mode [gi][7:1]
+      );
 
-    assign hex_from_extra_debug [i][0] = 1'b0;
-  end
+      assign hex_from_show_mode [gi][0] = 1'b0;
+    end
+  endgenerate
+
+  //--------------------------------------------------------------------------
+
+  assign { hex0, hex1, hex2, hex3, hex4, hex5 }
+    = slow_clk_mode ? hex_from_show_mode : hex_from_mcu;
 
   //--------------------------------------------------------------------------
 

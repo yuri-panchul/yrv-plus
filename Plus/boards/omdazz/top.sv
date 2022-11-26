@@ -54,7 +54,12 @@ module top
     = slow_clk_mode ? clk_cnt [22] : clk;
 
   wire muxed_clk;
-  global i_global (.in (muxed_clk_raw), .out (muxed_clk));
+
+  `ifdef SIMULATION
+    assign muxed_clk = muxed_clk_raw;
+  `else
+    global i_global (.in (muxed_clk_raw), .out (muxed_clk));
+  `endif
 
   //--------------------------------------------------------------------------
   // MCU inputs
@@ -171,6 +176,8 @@ module top
       abcdefgh = abcdefgh_from_mcu;
       digit    = digit_from_mcu;
     end
+
+  //--------------------------------------------------------------------------
 
   `ifdef OLD_INTERRUPT_CODE
 
