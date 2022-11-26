@@ -45,7 +45,7 @@
 `ifdef INTEL_VERSION
   `define BOOT_FROM_AUX_UART
   `define EXPOSE_MEM_BUS
-  // `define RESET_BASE_AND_INT_VECTORS_FOR_RARS
+  `define RESET_BASE_AND_INT_VECTORS_FOR_RARS
 `endif
 
 /*******************************************************************************************/

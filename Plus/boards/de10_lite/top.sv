@@ -93,7 +93,8 @@ module top
   // Auxiliary UART receive pin
 
   `ifdef BOOT_FROM_AUX_UART
-  wire         aux_uart_rx = gpio [31];
+  wire         aux_uart_rx = gpio [34];
+  assign gpio [35] = 1'b0;  // ground
   `endif
 
   // Exposed memory bus for debug purposes
@@ -122,16 +123,16 @@ module top
 
   //--------------------------------------------------------------------------
 
-  logic [0:5][7:0] hex_from_mcu;
+  logic [5:0][7:0] hex_from_mcu;
 
   always_ff @ (posedge clk)
     for (int i = 0; i < 4; i ++)
-      if (port1_reg [i])
+      if (~ port1_reg [i])
         hex_from_mcu [i]
-          <= { port0_reg[0], port0_reg[1], port0_reg[2], port0_reg[3],
-               port0_reg[4], port0_reg[5], port0_reg[6], port0_reg[7] };
+          <= { port0_reg[7], port0_reg[0], port0_reg[1], port0_reg[2],
+               port0_reg[3], port0_reg[4], port0_reg[5], port0_reg[6] };
 
-  assign hex_from_mcu [4:5] = '0;
+  assign hex_from_mcu [5:4] = '1;
 
   //--------------------------------------------------------------------------
 
@@ -140,17 +141,17 @@ module top
   always_comb
     casez (sw)
     default        : display_number = mem_addr         [23:0];
-    10'b????????0? : display_number = mem_rdata        [23:0];
-    10'b???????01? : display_number = mem_rdata        [31:8];
-    10'b??????011? : display_number = mem_wdata        [23:0];
-    10'b?????0111? : display_number = mem_wdata        [31:8];
-    10'b????01111? : display_number = extra_debug_data [23:0];
-    10'b???011111? : display_number = extra_debug_data [31:8];
+    10'b????????1? : display_number = mem_rdata        [23:0];
+    10'b???????10? : display_number = mem_rdata        [31:8];
+    10'b??????100? : display_number = mem_wdata        [23:0];
+    10'b?????1000? : display_number = mem_wdata        [31:8];
+    10'b????10000? : display_number = extra_debug_data [23:0];
+    10'b???100000? : display_number = extra_debug_data [31:8];
     endcase
 
   //--------------------------------------------------------------------------
 
-  wire [0:5][7:0] hex_from_show_mode;
+  wire [5:0][7:0] hex_from_show_mode;
 
   genvar gi;
 
@@ -160,16 +161,16 @@ module top
       display_static_digit i_digit
       (
         display_number [gi * 4 +: 4],
-        hex_from_show_mode [gi][7:1]
+        hex_from_show_mode [gi][6:0]
       );
 
-      assign hex_from_show_mode [gi][0] = 1'b0;
+      assign hex_from_show_mode [gi][7] = 1'b1;
     end
   endgenerate
 
   //--------------------------------------------------------------------------
 
-  assign { hex0, hex1, hex2, hex3, hex4, hex5 }
+  assign { hex5, hex4, hex3, hex2, hex1, hex0 }
     = slow_clk_mode ? hex_from_show_mode : hex_from_mcu;
 
   //--------------------------------------------------------------------------
