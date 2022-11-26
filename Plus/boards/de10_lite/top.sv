@@ -5,28 +5,28 @@
 
 module top
 (
-  input           adc_clk_10,
-  input           max10_clk1_50,
-  input           max10_clk2_50,
+  input         adc_clk_10,
+  input         max10_clk1_50,
+  input         max10_clk2_50,
 
-  input   [ 1:0]  key,
-  input   [ 9:0]  sw,
-  output  [ 9:0]  led,
+  input  [ 1:0] key,
+  input  [ 9:0] sw,
+  output [ 9:0] led,
 
-  output  [ 7:0]  hex0,
-  output  [ 7:0]  hex1,
-  output  [ 7:0]  hex2,
-  output  [ 7:0]  hex3,
-  output  [ 7:0]  hex4,
-  output  [ 7:0]  hex5,
+  output [ 7:0] hex0,
+  output [ 7:0] hex1,
+  output [ 7:0] hex2,
+  output [ 7:0] hex3,
+  output [ 7:0] hex4,
+  output [ 7:0] hex5,
 
-  output          vga_hs,
-  output          vga_vs,
-  output  [ 3:0]  vga_r,
-  output  [ 3:0]  vga_g,
-  output  [ 3:0]  vga_b,
+  output        vga_hs,
+  output        vga_vs,
+  output [ 3:0] vga_r,
+  output [ 3:0] vga_g,
+  output [ 3:0] vga_b,
 
-  inout   [35:0]  gpio
+  inout  [35:0] gpio
 );
 
   //--------------------------------------------------------------------------
@@ -51,7 +51,7 @@ module top
 
   logic [22:0] clk_cnt;
 
-  always @ (posedge clk or posedge reset)
+  always_ff @ (posedge clk or posedge reset)
     if (~ reset_n)
       clk_cnt <= '0;
     else
@@ -117,76 +117,37 @@ module top
 
   //--------------------------------------------------------------------------
 
-  wire [7:0] abcdefgh_from_mcu
-    = { port0_reg[0], port0_reg[1], port0_reg[2], port0_reg[3],
-        port0_reg[4], port0_reg[5], port0_reg[6], port0_reg[7] };
+  logic [5:0][7:0] hex_from_mcu;
 
-  assign hex0 = { 8 { port1_reg [0] } } & abcdefgh_from_mcu;
-  assign hex1 = { 8 { port1_reg [1] } } & abcdefgh_from_mcu;
-  assign hex2 = { 8 { port1_reg [2] } } & abcdefgh_from_mcu;
-  assign hex3 = { 8 { port1_reg [3] } } & abcdefgh_from_mcu;
+  always_ff @ (posedge clk)
+    for (int i = 0; i < 4; i ++)
+      if (port1_reg [i])
+        hex_from_mcu [i]
+          <= { port0_reg[0], port0_reg[1], port0_reg[2], port0_reg[3],
+               port0_reg[4], port0_reg[5], port0_reg[6], port0_reg[7] };
+
+  assign hex_from_mcu [5:4] = '0;
 
   //--------------------------------------------------------------------------
 
-    display_static_digit i_digit_0 ( number_to_display [ 3: 0], hex0 [6:0]);
-    display_static_digit i_digit_1 ( number_to_display [ 7: 4], hex1 [6:0]);
-    display_static_digit i_digit_2 ( number_to_display [11: 8], hex2 [6:0]);
-    display_static_digit i_digit_3 ( number_to_display [15:12], hex3 [6:0]);
-    display_static_digit i_digit_4 ( number_to_display [19:16], hex4 [6:0]);
-    display_static_digit i_digit_5 ( number_to_display [23:20], hex5 [6:0]);
+  logic [23:0] extra_debug;
 
-    assign { hex5 [7], hex4 [7], hex3 [7], hex2 [7], hex1 [7], hex0 [7] }
-        = ~ sw [5:0];
+  wire [5:0][7:0] hex_from_extra_debug;
 
+  genvar gi;
 
-  wire [7:0] abcdefgh_from_mcu =
-  {
-    port0_reg[6],
-    port0_reg[5],
-    port0_reg[4],
-    port0_reg[3],
-    port0_reg[2],
-    port0_reg[1],
-    port0_reg[0],
-    port0_reg[7] 
-  };
+  for (gi = 0; gi < 6; gi ++)
+  begin : gen 
+    display_static_digit i_digit
+    (
+      extra_debug [i * 4 +: 4],
+      hex_from_extra_debug [i][7:1]
+    );
 
-  wire [3:0] digit_from_mcu =
-  {
-    port1_reg [3],
-    port1_reg [2],
-    port1_reg [1],
-    port1_reg [0]
-  };
+    assign hex_from_extra_debug [i][0] = 1'b0;
+  end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    wire [23:0] number_to_display
-        = ~ { key, key, sw, sw };
-
-    display_static_digit i_digit_0 ( number_to_display [ 3: 0], hex0 [6:0]);
-    display_static_digit i_digit_1 ( number_to_display [ 7: 4], hex1 [6:0]);
-    display_static_digit i_digit_2 ( number_to_display [11: 8], hex2 [6:0]);
-    display_static_digit i_digit_3 ( number_to_display [15:12], hex3 [6:0]);
-    display_static_digit i_digit_4 ( number_to_display [19:16], hex4 [6:0]);
-    display_static_digit i_digit_5 ( number_to_display [23:20], hex5 [6:0]);
-
-    assign { hex5 [7], hex4 [7], hex3 [7], hex2 [7], hex1 [7], hex0 [7] }
-        = ~ sw [5:0];
+  //--------------------------------------------------------------------------
 
   `ifdef OLD_INTERRUPT_CODE
 
