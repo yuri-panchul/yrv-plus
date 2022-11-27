@@ -53,8 +53,14 @@ is_command_available_or_error ()
 
 is_command_available_or_error_and_sudo_apt_install ()
 {
+    if [ -n "$2" ]; then
+        package=$2
+    else
+        package=$1
+    fi
+
     is_command_available_or_error  \
-        $1 "" ". To install run: sudo apt install $1"
+        $1 "" ". To install run: sudo apt install $package"
 }
 
 #-----------------------------------------------------------------------------
