@@ -16,8 +16,8 @@ killall jtagd 2>/dev/null || true
 
 quartus_pgm -l &> cable_list
 
-CABLE_NAME_1=$(set +o pipefail; grep "1) " cable_list | sed 's/1) //')
-CABLE_NAME_2=$(set +o pipefail; grep "2) " cable_list | sed 's/2) //')
+CABLE_NAME_1=$(set +o pipefail; grep "1) " cable_list | sed 's/.*1) //')
+CABLE_NAME_2=$(set +o pipefail; grep "2) " cable_list | sed 's/.*2) //')
 
 if [ -n "$CABLE_NAME_1" ]
 then
