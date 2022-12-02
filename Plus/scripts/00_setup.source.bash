@@ -53,7 +53,7 @@ is_command_available_or_error ()
 
 is_command_available_or_error_and_sudo_apt_install ()
 {
-    if [ -n "$2" ]; then
+    if [ -n "${2-}" ]; then
         package=$2
     else
         package=$1
