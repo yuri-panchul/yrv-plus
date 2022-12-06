@@ -1,0 +1,99 @@
+set_global_assignment -name FAMILY "Cyclone III"
+set_global_assignment -name DEVICE EP3C16F484C6
+
+set_global_assignment   -name VERILOG_INPUT_VERSION     SYSTEMVERILOG_2005
+
+set_global_assignment   -name NUM_PARALLEL_PROCESSORS   4
+set_global_assignment   -name PROJECT_OUTPUT_DIRECTORY  .
+
+set_global_assignment   -name TOP_LEVEL_ENTITY          top
+set_global_assignment   -name SEARCH_PATH               ..
+set_global_assignment   -name SEARCH_PATH               ../../../design
+set_global_assignment   -name VERILOG_FILE              top.sv
+set_global_assignment   -name VERILOG_FILE              display_static_digit_de0.sv
+set_global_assignment   -name SDC_FILE                  ../top.sdc
+
+
+set_global_assignment -name ENABLE_ADVANCED_IO_TIMING ON
+set_global_assignment -name FORCE_CONFIGURATION_VCCIO ON
+
+source top_extra.qsf
+
+set_global_assignment   -name RESERVE_ALL_UNUSED_PINS_WEAK_PULLUP "AS INPUT TRI-STATED"
+
+set_instance_assignment -name IO_STANDARD               "3.3-V LVTTL" -to *
+
+# For some reason this setting is necessary even for Cyclone IV.
+# It does not route the design without it on omdazz / rzrd.net board.
+
+set_global_assignment   -name CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION "USE AS REGULAR IO"
+
+set_location_assignment PIN_G21  -to clk
+set_location_assignment PIN_H2 -to reset_n
+set_location_assignment PIN_G3 -to slow_mode
+
+set_location_assignment PIN_J6  -to key_sw[0]
+set_location_assignment PIN_H5  -to key_sw[1]
+set_location_assignment PIN_H6  -to key_sw[2]
+set_location_assignment PIN_G4  -to key_sw[3]
+
+set_location_assignment PIN_J1  -to led[0]
+set_location_assignment PIN_J2  -to led[1]
+set_location_assignment PIN_J3  -to led[2]
+set_location_assignment PIN_H1  -to led[3]
+
+
+
+set_location_assignment PIN_E11 -to abcdefgh[0][0]
+set_location_assignment PIN_F11 -to abcdefgh[0][1]
+set_location_assignment PIN_H12 -to abcdefgh[0][2]
+set_location_assignment PIN_H13 -to abcdefgh[0][3]
+set_location_assignment PIN_G12 -to abcdefgh[0][4]
+set_location_assignment PIN_F12 -to abcdefgh[0][5]
+set_location_assignment PIN_F13 -to abcdefgh[0][6]
+set_location_assignment PIN_D13 -to abcdefgh[0][7]
+
+
+set_location_assignment PIN_A13 -to abcdefgh[1][0]
+set_location_assignment PIN_B13 -to abcdefgh[1][1]
+set_location_assignment PIN_C13 -to abcdefgh[1][2]
+set_location_assignment PIN_A14 -to abcdefgh[1][3]
+set_location_assignment PIN_B14 -to abcdefgh[1][4]
+set_location_assignment PIN_E14 -to abcdefgh[1][5]
+set_location_assignment PIN_A15 -to abcdefgh[1][6]
+set_location_assignment PIN_B15 -to abcdefgh[1][7]
+
+set_location_assignment PIN_D15 -to abcdefgh[2][0]
+set_location_assignment PIN_A16 -to abcdefgh[2][1]
+set_location_assignment PIN_B16 -to abcdefgh[2][2]
+set_location_assignment PIN_E15 -to abcdefgh[2][3]
+set_location_assignment PIN_A17 -to abcdefgh[2][4]
+set_location_assignment PIN_B17 -to abcdefgh[2][5]
+set_location_assignment PIN_F14 -to abcdefgh[2][6]
+set_location_assignment PIN_A18 -to abcdefgh[2][7]
+
+set_location_assignment PIN_B18 -to abcdefgh[3][0]
+set_location_assignment PIN_F15 -to abcdefgh[3][1]
+set_location_assignment PIN_A19 -to abcdefgh[3][2]
+set_location_assignment PIN_B19 -to abcdefgh[3][3]
+set_location_assignment PIN_C19 -to abcdefgh[3][4]
+set_location_assignment PIN_D19 -to abcdefgh[3][5]
+set_location_assignment PIN_G15 -to abcdefgh[3][6]
+set_location_assignment PIN_G16 -to abcdefgh[3][7]
+
+set_location_assignment PIN_AA18 -to buzzer
+
+set_location_assignment PIN_L21 -to hsync
+set_location_assignment PIN_L22 -to vsync
+
+set_location_assignment PIN_K22 -to rgb[0]
+set_location_assignment PIN_H22 -to rgb[1]
+set_location_assignment PIN_H19 -to rgb[2]
+
+set_location_assignment PIN_V7 -to rx
+set_location_assignment PIN_V6 -to tx
+
+set_location_assignment PIN_AB19 -to ir
+
+set_global_assignment -name LAST_QUARTUS_VERSION 13.1
+set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "2.5 V"
