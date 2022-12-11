@@ -1,23 +1,24 @@
 `define INTEL_VERSION
 `define CLK_FREQUENCY (50 * 1000 * 1000)
+`define MEM_SIZE 1023
 
 `include "yrv_mcu.v"
 
 module top
 (
-  input         clk,
-  input		reset,
+  input         clk1_50,
+// input		reset_in,
   input  [ 1:0] key,
-  input  [ 3:0] sw,
+  input  [ 9:0] sw,
 
-  output [ 3:0] led,
+  output [ 9:0] led,
 
   output [ 7:0] hex0,
   output [ 7:0] hex1,
   output [ 7:0] hex2,
   output [ 7:0] hex3,
-//  output [ 7:0] hex4,
-//  output [ 7:0] hex5,
+  output [ 7:0] hex4,
+  output [ 7:0] hex5,
 
   output        vga_hs,
   output        vga_vs,
@@ -44,13 +45,13 @@ module top
   //--------------------------------------------------------------------------
   // Clock and reset
 
-//  wire clk   = max10_clk1_50;
-//  wire reset = sw [9];
+   wire clk   = clk1_50;
+   wire reset = ~ key[0];
 
   //--------------------------------------------------------------------------
   // MCU clock
 
-  wire slow_clk_mode = sw [0];
+  wire slow_clk_mode = ~ key[1];
 
   logic [22:0] clk_cnt;
 
@@ -134,6 +135,7 @@ module top
           <= { port0_reg[7], port0_reg[0], port0_reg[1], port0_reg[2],
                port0_reg[3], port0_reg[4], port0_reg[5], port0_reg[6] };
 
+
   assign hex_from_mcu [5:4] = '1;
 
   //--------------------------------------------------------------------------
@@ -158,7 +160,7 @@ module top
   genvar gi;
 
   generate
-    for (gi = 0; gi < 4; gi ++)
+    for (gi = 0; gi < 6; gi ++)
     begin : gen
       display_static_digit i_digit
       (

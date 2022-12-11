@@ -3,7 +3,7 @@
 set -Eeuo pipefail  # See the meaning in scripts/README.md
 
 
-INTELFPGA_INSTALL_DIR=altera
+#INTELFPGA_INSTALL_DIR=altera
 
 script=$(basename "$0")
 source_script=${script/\.bash/.source.bash}

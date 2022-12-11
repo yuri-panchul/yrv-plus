@@ -132,7 +132,11 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
   wire   [31:0] mem_rdata;                                 /* raw read data                */
 `else
   wire    [3:0] mem_wr_byte;                               /* system ram byte enables      */
-  reg     [7:0] mcu_mem [0:4095];                          /* system ram                   */
+    `ifdef MEM_SIZE
+	reg     [7:0] mcu_mem [0:`MEM_SIZE];                          /* system ram                   */
+    `else
+	reg     [7:0] mcu_mem [0:4095];                          /* system ram                   */
+    `endif
   reg    [31:0] mem_rdata;                                 /* raw read data                */
 `endif
 

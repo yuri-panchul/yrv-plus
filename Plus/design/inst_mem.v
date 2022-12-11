@@ -142,10 +142,10 @@ module inst_mem  (mem_rdata, clk, mem_addr, mem_addr_reg, mem_ble_reg, mem_ready
   /* Another option, readmemh in yrv_mcu.v under ifndef INSTANCE_MEM, is not going to work */
   /* because Intel FPGA Quartus Prime does not support 8-bit readmemh for synthesis.       */
   /*****************************************************************************************/
- 
+
   reg [31:0] rom[0:255];
 
-  initial $readmemh("code_demo.mem32", rom);
+//  initial $readmemh("code_demo.mem32", rom);
 
   assign mem_rdata = rom[mem_addr_reg[9:2]];
 
