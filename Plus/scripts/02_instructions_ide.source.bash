@@ -5,5 +5,5 @@ if ! [ -f "$rars_path"  ]; then
         "https://github.com/TheThirdOne/rars/releases/download/$rars_version/$rars"
 fi
 
-is_command_available_or_error_and_sudo_apt_install java default-jre
+is_command_available_or_error_and_sudo_apt_get_install java default-jre
 java -jar "$rars_path" &

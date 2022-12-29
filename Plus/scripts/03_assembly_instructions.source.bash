@@ -10,5 +10,5 @@ fi
 #  ae<n>                              - terminate RARS with integer exit code if an assemble error occurs
 #  dump .text HexText $program_mem32  - dump segment .text to $program_mem32 file in HexText format
 
-is_command_available_or_error_and_sudo_apt_install java default-jre
+is_command_available_or_error_and_sudo_apt_get_install java default-jre
 java -jar "$rars_path" nc a ae1 dump .text HexText $program_mem32 ../program.S
