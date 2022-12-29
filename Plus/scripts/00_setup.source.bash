@@ -229,3 +229,15 @@ program_mem32=program.mem32
 demo_program_mem32=code_demo.mem32
 
 cp "$design_dir"/code_demo.mem* .
+
+#-----------------------------------------------------------------------------
+
+# Workarounds for Quartus library problems
+# that are uncovered under RED OS from https://www.red-soft.ru
+
+if    ! [ -f /usr/lib64/libcrypt.so.1 ] \
+   &&   [ -f /usr/lib64/libcrypt.so   ]
+then
+    ln -sf /usr/lib64/libcrypt.so libcrypt.so.1
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$PWD"
+fi
