@@ -51,7 +51,7 @@ is_command_available_or_error ()
 
 #-----------------------------------------------------------------------------
 
-is_command_available_or_error_and_sudo_apt_get_install ()
+is_command_available_or_error_and_install ()
 {
     if [ -n "${2-}" ]; then
         package=$2
@@ -60,7 +60,7 @@ is_command_available_or_error_and_sudo_apt_get_install ()
     fi
 
     is_command_available_or_error  \
-        $1 "" ". To install run: sudo apt-get install $package"
+        $1 "" ". To install, run either: \"sudo apt-get install $package\" or \"sudo yum install $package\". If it does not work, google the instructions."
 }
 
 #-----------------------------------------------------------------------------

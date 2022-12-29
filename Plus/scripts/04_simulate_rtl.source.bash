@@ -2,7 +2,7 @@
 
 #-----------------------------------------------------------------------------
 
-is_command_available_or_error_and_sudo_apt_get_install iverilog
+is_command_available_or_error_and_install iverilog
 
 iverilog -g2005-sv    \
     -D INTEL_VERSION  \
@@ -14,7 +14,7 @@ vvp a.out 2>&1 | tee "$log"
 
 #-----------------------------------------------------------------------------
 
-is_command_available_or_error_and_sudo_apt_get_install gtkwave
+is_command_available_or_error_and_install gtkwave
 
 gtkwave_script=../xx.gtkwave.tcl
 gtkwave_options=
