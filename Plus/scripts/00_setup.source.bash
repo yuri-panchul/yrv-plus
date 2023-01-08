@@ -59,8 +59,13 @@ is_command_available_or_error_and_install ()
         package=$1
     fi
 
-    is_command_available_or_error  \
-        $1 "" ". To install, run either: \"sudo apt-get install $package\" or \"sudo yum install $package\". If it does not work, google the instructions."
+    if [ "$OSTYPE" = "linux-gnu" ]; then
+        how_to_install=". To install, run either: \"sudo apt-get install $package\" or \"sudo yum install $package\". If it does not work, google the instructions."
+    else
+        how_to_install=
+    fi
+
+    is_command_available_or_error $1 "" "$how_to_install"
 }
 
 #-----------------------------------------------------------------------------
