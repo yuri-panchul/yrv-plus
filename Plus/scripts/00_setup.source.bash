@@ -128,7 +128,7 @@ then
     QUESTA_BIN_DIR=win64
     QUESTA_LIB_DIR=win64
 
-    if [ -z "{$LM_LICENSE_FILE-}" ]
+    if [ -z "${LM_LICENSE_FILE-}" ]
     then
         export LM_LICENSE_FILE=/c/flexlm/license.dat
     fi
