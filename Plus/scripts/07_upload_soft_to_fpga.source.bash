@@ -14,9 +14,11 @@ gr=dialout
 
 if ! id -nG | grep -qw $gr
 then
-    error "User \"$USER\" is not in \"$gr\" group."  \
-        "Run: \"sudo usermod -a -G $gr $USER\","     \
-        "then logout, login and try again."
+    error "User \"$USER\" is not in \"$gr\" group."   \
+        "Run: \"sudo usermod -a -G $gr $USER\","      \
+        "then reboot and try again."                  \
+        "(On some systems it is sufficient"           \
+        "to logout and login instead of the reboot).
 fi
 
 dev=/dev/ttyUSB0
