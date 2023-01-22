@@ -4,7 +4,7 @@ B2H = ../common/bin2hex
 export objcopy := $(OBJ)
 export bin2hex := $(B2H)
 
-CFLAGS=-c -march=rv32izbs -mabi=ilp32 -g -ffreestanding -O0 -nostartfiles 
+CFLAGS= -fabi-version=6  -I./barebones -I. -c -march=rv32izbs -mabi=ilp32 -g -ffreestanding -O0 -nostartfiles 
 LDFLAGS=-nostdlib -Tyrv.ld 
 
 all:code_demo.mem32
@@ -26,7 +26,18 @@ crt0.o:crt0.s
 main.o:main.c
 	$(GCC) $(CFLAGS) -o $@ $^
 
-final.elf:crt0.o eset_led.o trap_ack.o nmi_vec.o dbg_vec.o main.o
+ee_printf.o:ee_printf.c
+	$(GCC) $(CFLAGS) -o $@ $^
+
+div.o:div.S
+	$(GCC) $(CFLAGS) -o $@ $^
+
+muldi3.o:muldi3.S
+	$(GCC) $(CFLAGS) -o $@ $^
+
+
+final.elf:crt0.o eset_led.o trap_ack.o nmi_vec.o dbg_vec.o main.o div.o muldi3.o ee_printf.o
+#ee_printf.o div.o muldi3.o
 	$(GCC) $(LDFLAGS) -o $@ $^
 
 final:final.elf

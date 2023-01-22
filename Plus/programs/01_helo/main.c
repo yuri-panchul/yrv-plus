@@ -1,5 +1,6 @@
 #include "memory_mapped_registers.h"
 #include <stdint.h>
+#include <coremark.h>
 
 #define LED_0   0xe
 #define LED_1   0xd
@@ -24,6 +25,50 @@
 
 uint32_t clock;
 
+void sleep();
+
+void long_sleep();
+
+void very_long_sleep();
+
+ 
+void clean() ;
+void H() ;
+
+void E();
+
+void L() ;
+
+void O() ;
+void HELO(int state);
+
+int next(int prev, int step);
+
+void beep() ;
+void __attribute__((optimize("O0"))) say_serial_a();
+
+void __attribute__((optimize("O0"))) say_lpt_a();
+
+void   main(){
+
+        clean();
+        very_long_sleep();
+        int state = 0;
+        int step = 3;
+        ee_printf("Hello world!!!\n");
+
+	while(1){       
+                if(state==step) {
+                        beep();
+                        // say_lpt_a();
+
+                }           
+                HELO(state);        
+                state = next(state,step);     
+        }
+}
+
+
 void sleep(){
         for(int i=0;i <100; i++) {
                 clock++;
@@ -35,10 +80,18 @@ void long_sleep(){
                 clock++;
         }
 }
+
+void very_long_sleep(){
+        for(int i=0;i <60000; i++) {
+                clock++;
+        }
+}
+
  
 void clean() {
         port0 =0xff;
 	port1 =0xf;
+        port3 = 0x01;
 }
 
 void H() {
@@ -84,23 +137,30 @@ int next(int prev, int step){
 
 void beep() {
         for (short i = 0; i < 100; i++) {
-                        port2=0x01;
+                     //   port2=0xff00;
                         long_sleep();
-                        port2=0x00;
+                        port2=0x0000;
                         long_sleep();
         }
 }
 
-void main(){
-        clean();
-        int state = 0;
-        int step = 3;
-        while(1){       
-                if(state==step) {
-                        beep();
-                }           
-                HELO(state);        
-                state = next(state,step);     
-        }
+void __attribute__((optimize("O0"))) say_serial_a()
+{
+        port5 = 0x1468;
+        port5 = 0x1460;
+        port6 = 0x0041;
+        port5 = 0x1462;
+        port5 = 0x1460;
+        
+}
+
+void __attribute__((optimize("O0"))) say_lpt_a()
+{
+        port2 = 0x41;
+        port3 = 0x01;   
+        very_long_sleep(); 
+        port3 = 0x00;
+        very_long_sleep();     
+        port3 = 0x01;   
 }
 

@@ -25,11 +25,3 @@ loop:
            
            beq   zero, zero, loop
                     
-.section .data     
-segtab:    .word 0x8692cf81          # 3210  segment drive act-low
-           .word 0x8fa0a4cc          # 7654
-           .word 0xe0888480          # BA98
-           .word 0xb8b0c2b1          # FEDC
-
-digit:     .word 0x01020304
-
