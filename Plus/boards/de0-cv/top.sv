@@ -1,13 +1,12 @@
 `define INTEL_VERSION
 `define CLK_FREQUENCY (50 * 1000 * 1000)
-`define MEM_SIZE 1023
 
 `include "yrv_mcu.v"
 
 module top
 (
   input         clk1_50,
-// input		reset_in,
+// input    reset_in,
   input  [ 1:0] key,
   input  [ 9:0] sw,
 
@@ -24,7 +23,15 @@ module top
   output        vga_vs,
   output [ 3:0] vga_r,
   output [ 3:0] vga_g,
-  output [ 3:0] vga_b
+  output [ 3:0] vga_b,
+  output        lpt_STROBE,
+  output  [7:0] lpt_data,
+  output        lpt_AUTOFEED,
+  input         lpt_ACK,
+  input         lpt_BUSY,
+  input         lpt_POUT,
+  input         lpt_SEL,
+  output        lpt_reset
 
   `ifdef BOOT_FROM_AUX_UART
   ,
@@ -53,13 +60,44 @@ module top
 
   wire slow_clk_mode = ~ key[1];
 
-  logic [22:0] clk_cnt;
+  logic [23:0] clk_cnt;
+    //Timer 3Hz
+  logic [15:0] timer;
 
   always_ff @ (posedge clk or posedge reset)
     if (reset)
       clk_cnt <= '0;
     else
-      clk_cnt <= clk_cnt + 1'd1;
+      begin
+        clk_cnt <= clk_cnt + 1'd1;
+
+      end
+ 
+ logic timer_flag;
+
+ wire time_clk = clk_cnt[23];
+
+always_ff @ (posedge time_clk or posedge reset)
+   if (reset)
+      timer <= '0;
+    else
+      timer <= timer+1'd1;
+
+ 
+ // always @ (posedge clk or posedge reset)
+ //    if (reset)
+ //      begin
+ //        timer <= '0;
+ //        timer_flag <='0;
+ //      end
+ //    else
+ //      if(clk_cnt[23] && ~timer_flag )
+ //        begin
+ //          timer <= timer+1'd1;
+ //          timer_flag <=1'b1;
+ //        end
+ //      else if (clk_cnt[22])
+ //          timer_flag <=0;
 
   wire muxed_clk_raw
     = slow_clk_mode ? clk_cnt [22] : clk;
@@ -79,8 +117,8 @@ module top
   wire         nmi_req   = 1'b0;     // non-maskable interrupt
   wire         resetb    = ~ reset;  // master reset
   wire         ser_rxd   = 1'b0;     // receive data input
-  wire  [15:0] port4_in  = '0;
-  wire  [15:0] port5_in  = '0;
+  wire  [15:0] port4_in;
+  wire  [15:0] port5_in;
 
   //--------------------------------------------------------------------------
   // MCU outputs
@@ -112,6 +150,20 @@ module top
   wire  [31:0] mem_wdata;   // memory write data
 
   wire  [31:0] extra_debug_data;
+
+  //-------------------
+  // LPT Ports
+  assign lpt_STROBE = port3_reg[0];
+  assign lpt_reset = port3_reg[1];
+  assign lpt_data =   port2_reg[7:0];
+  assign port4_in[0] = lpt_ACK;
+  assign port4_in[1] = lpt_BUSY;
+  assign port4_in[2] = lpt_POUT;
+  assign port4_in[3] = lpt_SEL;
+
+  assign port4_in[15:4] = 1'b0;
+  assign port5_in = timer;
+
 
   //--------------------------------------------------------------------------
   // MCU instantiation

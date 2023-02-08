@@ -128,7 +128,22 @@ set_location_assignment PIN_V10  -to buzzer
 set_location_assignment PIN_J17 -to rx
 set_location_assignment PIN_K16 -to tx
 
-
+set_location_assignment PIN_T15  -to lpt_STROBE
+set_location_assignment PIN_T17  -to lpt_data[0]
+set_location_assignment PIN_T18  -to lpt_data[1]
+set_location_assignment PIN_T19  -to lpt_data[2]
+set_location_assignment PIN_T20  -to lpt_data[3]
+set_location_assignment PIN_R16  -to lpt_data[4]
+set_location_assignment PIN_R17  -to lpt_data[5]
+set_location_assignment PIN_R15  -to lpt_data[6]
+set_location_assignment PIN_P18  -to lpt_data[7]
+set_location_assignment PIN_K19  -to lpt_ACK
+set_location_assignment PIN_K17  -to lpt_BUSY
+set_location_assignment PIN_L19  -to lpt_POUT
+set_location_assignment PIN_L17  -to lpt_SEL
+set_location_assignment PIN_L18  -to lpt_AUTOFEED
+set_location_assignment PIN_M16  -to lpt_error
+set_location_assignment PIN_C16  -to lpt_reset
 
 # set_location_assignment PIN_U17  -to dram_addr[0]
 # set_location_assignment PIN_W19  -to dram_addr[1]
