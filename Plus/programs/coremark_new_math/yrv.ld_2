@@ -1,0 +1,82 @@
+OUTPUT_ARCH( "riscv" )
+ENTRY(_start)
+MEMORY
+{
+  BRAM     (rx) : ORIGIN = 0x00000000, LENGTH = 64K
+}
+_TRAP_ACK = 0x040;
+_NMI_VECT = 0x100;
+_DBG_VEC =  0x140;
+_DEX_VEC =  0x1c0;
+_RST_BASE = 0x200;
+_STACK_SIZE = 0x0800; 
+ SECTIONS
+ {
+
+
+ .text :
+ {
+    *(.text.eset_led)
+    . = _TRAP_ACK;
+    *(.text.trap_ack)
+    . = _NMI_VECT;
+    *(.text.nmi_vec)
+    . = _DBG_VEC;
+    *(.text.dbg_vec)
+    . = _DEX_VEC;
+    *(.text.dex_vec)
+    . = _RST_BASE;
+    *(.text.init)
+    *(.text)
+ }>BRAM 
+
+  . = ALIGN(4);
+
+ .rodata :
+ {  
+    *(.rodata)
+ }> BRAM
+
+
+    . = ALIGN(4);
+    PROVIDE( _data = . );
+
+ .data : ALIGN(4)
+ {  
+     *(.data .data.*)
+    . = ALIGN(8);
+    PROVIDE( __global_pointer$ = . + 0x800);
+    *(.sdata .sdata.*)
+    *(.gnu.linkonce.s.*)
+    *(.bss .bss.*)    
+    *(.sbss .sbss.*)
+    *(.gnu.linkonce.sb.*)        
+
+    _edata = .;
+
+ }> BRAM
+
+
+
+
+    . = ALIGN(8);              /*align with 8 bytes */
+    /*provide is to define a symbol only if it is referenced and is not defined by any object included*/
+    PROVIDE( _end = . );      /*define _end address */
+    PROVIDE( end = . );       /*define end address */
+    .stack ORIGIN(BRAM) + LENGTH(BRAM) - _STACK_SIZE :      /*define .stack address */
+    {
+        . = _STACK_SIZE;       /*_STACK_SIZE assign the address*/
+        PROVIDE( __stack_top = . );     /*define _sp address */
+    } >BRAM
+
+ 
+  /DISCARD/ :
+  {
+    *(.note.gnu.build-id)
+    *(.riscv.attributes)
+    *(.comment)
+  }
+ 
+
+_end = .;
+ }
