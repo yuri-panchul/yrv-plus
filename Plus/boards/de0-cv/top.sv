@@ -43,11 +43,38 @@ module top
   //--------------------------------------------------------------------------
   // Unused pins
 
-  assign vga_hs = '0;
-  assign vga_vs = '0;
-  assign vga_r  = '0;
-  assign vga_g  = '0;
-  assign vga_b  = '0;
+  // assign vga_hs = '0;
+  // assign vga_vs = '0;
+  // assign vga_r  = '0;
+  // assign vga_g  = '0;
+  // assign vga_b  = '0;
+
+
+  //Memory bus interface
+  reg    [15:0] mem_addr_reg;                              /* reg'd memory address         */
+  reg     [3:0] mem_ble_reg;                               /* reg'd memory byte lane en    */
+
+
+  wire    [3:0] vga_wr_byte_0;                                 /* vga ram byte enables      */
+  reg           vga_wr_reg_0;                                  /* mem write                    */
+
+  wire    [3:0] vga_wr_byte_1;                                 /* vga ram byte enables      */
+  reg           vga_wr_reg_1;                                  /* mem write                    */
+
+  reg     [7:0] vga_mem0_0 [0:16383];                          /* vga ram                   */
+  reg     [7:0] vga_mem1_0 [0:16383];                          /* vga ram                   */
+  reg     [7:0] vga_mem2_0 [0:16383];                          /* vga ram                   */
+  reg     [7:0] vga_mem3_0 [0:16383];                          /* vga ram                   */
+
+  reg     [7:0] vga_mem0_1 [0:16383];                          /* vga ram                   */
+  reg     [7:0] vga_mem1_1 [0:16383];                          /* vga ram                   */
+  reg     [7:0] vga_mem2_1 [0:16383];                          /* vga ram                   */
+  reg     [7:0] vga_mem3_1 [0:16383];                          /* vga ram                   */
+
+
+
+  assign vga_wr_byte_0 = {4{vga_wr_reg_0}} & mem_ble_reg & {4{mem_ready}};
+  assign vga_wr_byte_1 = {4{vga_wr_reg_1}} & mem_ble_reg & {4{mem_ready}};
 
   //--------------------------------------------------------------------------
   // Clock and reset
@@ -100,7 +127,7 @@ always_ff @ (posedge time_clk or posedge reset)
  //          timer_flag <=0;
 
   wire muxed_clk_raw
-    = slow_clk_mode ? clk_cnt [22] : clk;
+    = slow_clk_mode ? clk_cnt [20] : clk;
 
   wire muxed_clk;
 
@@ -260,7 +287,7 @@ always_ff @ (posedge time_clk or posedge reset)
   //--------------------------------------------------------------------------
   // 8 KHz interrupt
   // 50,000,000 Hz / 8 KHz = 6250 cycles
-
+/*
   logic [12:0] khz8_reg;
   logic        khz8_lat;
 
@@ -278,5 +305,152 @@ always_ff @ (posedge time_clk or posedge reset)
       khz8_reg <= khz8_lim ? 13'd0 : khz8_reg + 1'b1;
       khz8_lat <= ~ port3_reg [15] & (khz8_lim | khz8_lat);
     end
+*/
+
+
+    wire display_on;
+
+    wire [X_WIDTH - 1:0] x;
+    wire [Y_WIDTH - 1:0] y;
+
+
+    localparam X_WIDTH = 10,
+               Y_WIDTH = 10,
+               CLK_MHZ = 50;
+
+    vga
+    # (
+        .HPOS_WIDTH ( X_WIDTH      ),
+        .VPOS_WIDTH ( Y_WIDTH      ),
+        .CLK_MHZ    ( CLK_MHZ      )
+    )
+    i_vga
+    (
+        .clk        (   muxed_clk  ), 
+        .reset      (   ~resetb    ),
+        .hsync      (   vga_hs     ),
+        .vsync      (   vga_vs     ),
+        .display_on (   display_on ),
+        .hpos       (   x          ),
+        .vpos       (   y          )
+    );
+
+
+  always @ (posedge clk or negedge resetb) begin
+    if (!resetb) begin
+      mem_addr_reg <= 16'h0;
+      mem_ble_reg  <=  4'h0;
+      vga_wr_reg_0   <=  1'b0;
+      end
+    else if (mem_ready) begin
+      mem_addr_reg <= mem_addr[15:0];
+      mem_ble_reg  <= mem_ble;
+      vga_wr_reg_0   <= mem_write && &mem_trans    && (mem_addr[31:16] == `VGA_BASE_0);
+      vga_wr_reg_1   <= mem_write && &mem_trans    && (mem_addr[31:16] == `VGA_BASE_1);
+      end
+    end
+
+  reg   [31:0]  color_line_reg_0;
+  reg   [31:0]  color_line_reg_1;
+
+  always @ (posedge clk) begin
+          if (vga_wr_byte_0[3]) vga_mem3_0[mem_addr_reg[15:2]] <= mem_wdata[31:24];
+          if (vga_wr_byte_0[2]) vga_mem2_0[mem_addr_reg[15:2]] <= mem_wdata[23:16];
+          if (vga_wr_byte_0[1]) vga_mem1_0[mem_addr_reg[15:2]] <= mem_wdata[15:8];
+          if (vga_wr_byte_0[0]) vga_mem0_0[mem_addr_reg[15:2]] <= mem_wdata[7:0];
+          
+          if (vga_wr_byte_1[3]) vga_mem3_1[mem_addr_reg[15:2]] <= mem_wdata[31:24];
+          if (vga_wr_byte_1[2]) vga_mem2_1[mem_addr_reg[15:2]] <= mem_wdata[23:16];
+          if (vga_wr_byte_1[1]) vga_mem1_1[mem_addr_reg[15:2]] <= mem_wdata[15:8];
+          if (vga_wr_byte_1[0]) vga_mem0_1[mem_addr_reg[15:2]] <= mem_wdata[7:0];
+          
+
+            color_line_reg_0 <= {vga_mem3_0[pixel_addr[15:2]], vga_mem2_0 [pixel_addr[15:2]], vga_mem1_0 [pixel_addr[15:2]],vga_mem0_0 [pixel_addr[15:2]]};
+            color_line_reg_1 <= {vga_mem3_1[pixel_addr[15:2]], vga_mem2_1 [pixel_addr[15:2]], vga_mem1_1 [pixel_addr[15:2]],vga_mem0_1 [pixel_addr[15:2]]};
+            
+
+
+            pixel_bank <=pixel_addr[16];
+    end
+
+  logic [16:0] pixel_addr;
+  logic pixel_bank;
+  
+  logic [1:0]  chip;
+  reg   [7:0]  color_reg;// = 8'b00000011;
+
+
+
+  // ((y>>1)<<8) + ((y>>1)<<6) + x>>1
+  // assign pixel_addr = (((y>>1)*320)+(x>>1));
+  assign pixel_addr = (((y>>1)<<8) + ((y>>1)<<6) + (x>>1));
+  assign chip = pixel_addr[1:0];
+  
+
+  always@ (posedge clk) begin
+    // if(display_on)
+        case(chip)
+          2'b00: color_reg <= pixel_bank ? color_line_reg_1[7:0]: color_line_reg_0[7:0];
+          2'b01: color_reg <= pixel_bank ? color_line_reg_1[15:8]: color_line_reg_0[15:8];
+          2'b10: color_reg <= pixel_bank ? color_line_reg_1[23:16]: color_line_reg_0[23:16];
+          2'b11: color_reg <= pixel_bank ? color_line_reg_1[31:24]: color_line_reg_0[31:24];
+        endcase
+  end
+
+
+  always_comb
+    begin
+      // Circle
+
+      if (~ display_on)
+        begin          
+          vga_r = 4'b0000;
+          vga_g = 4'b0000;
+          vga_b = 4'b0000;
+        end
+      else 
+        begin
+          vga_r = {color_reg[7:5], color_reg[7] ||color_reg[6] || color_reg[5]};
+          vga_g = {color_reg[4:2], color_reg[4] ||color_reg[3] || color_reg[2]};
+          vga_b = {color_reg[1:0], color_reg[1] ||color_reg[0], color_reg[1]};       
+        end
+    end
+
+
+    // always_comb
+    // begin
+    //   // Circle
+
+    //   if (~ display_on)
+    //     begin          
+    //       vga_r = 4'b0000;
+    //       vga_g = 4'b0000;
+    //       vga_b = 4'b0000;
+    //     end
+    //   else if (x ** 2 + y ** 2 < 100 ** 2)
+    //     begin
+    //       vga_r = 4'b1111;
+    //       vga_g = 4'b0000;
+    //       vga_b = 4'b0000;          
+    //     end
+    //   else if (x > 200 & y > 200 & x < 300 & y < 400) 
+    //     begin
+    //       vga_r = 4'b1111;
+    //       vga_g = 4'b0011;
+    //       vga_b = 4'b0000;    
+    //     end
+    //   else if ((x - 600) ** 2 + (y - 200) ** 2 < 70 ** 2)
+    //     begin
+    //       vga_r = 4'b1111;
+    //       vga_g = 4'b1111;
+    //       vga_b = 4'b1111;          
+    //     end
+    //   else
+    //     begin
+    //       vga_r = 4'b0000;
+    //       vga_g = 4'b0011;
+    //       vga_b = 4'b1111;            
+    //     end
+    // end
 
 endmodule
