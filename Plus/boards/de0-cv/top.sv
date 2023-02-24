@@ -363,45 +363,38 @@ always_ff @ (posedge time_clk or posedge reset)
           if (vga_wr_byte_1[2]) vga_mem2_1[mem_addr_reg[15:2]] <= mem_wdata[23:16];
           if (vga_wr_byte_1[1]) vga_mem1_1[mem_addr_reg[15:2]] <= mem_wdata[15:8];
           if (vga_wr_byte_1[0]) vga_mem0_1[mem_addr_reg[15:2]] <= mem_wdata[7:0];
-          
-
-            color_line_reg_0 <= {vga_mem3_0[pixel_addr[15:2]], vga_mem2_0 [pixel_addr[15:2]], vga_mem1_0 [pixel_addr[15:2]],vga_mem0_0 [pixel_addr[15:2]]};
-            color_line_reg_1 <= {vga_mem3_1[pixel_addr[15:2]], vga_mem2_1 [pixel_addr[15:2]], vga_mem1_1 [pixel_addr[15:2]],vga_mem0_1 [pixel_addr[15:2]]};
-            
 
 
-            pixel_bank <=pixel_addr[16];
+
+        case(pixel_addr[1:0])
+          2'b00: color_reg <= pixel_addr[16] ? vga_mem0_1 [pixel_addr[15:2]]: vga_mem0_0 [pixel_addr[15:2]];
+          2'b01: color_reg <= pixel_addr[16] ? vga_mem1_1 [pixel_addr[15:2]]: vga_mem1_0 [pixel_addr[15:2]];
+          2'b10: color_reg <= pixel_addr[16] ? vga_mem2_1 [pixel_addr[15:2]]: vga_mem2_0 [pixel_addr[15:2]];
+          2'b11: color_reg <= pixel_addr[16] ? vga_mem3_1 [pixel_addr[15:2]]: vga_mem3_0 [pixel_addr[15:2]];
+        endcase    
     end
 
   logic [16:0] pixel_addr;
-  logic pixel_bank;
-  
-  logic [1:0]  chip;
   reg   [7:0]  color_reg;// = 8'b00000011;
 
 
 
   // ((y>>1)<<8) + ((y>>1)<<6) + x>>1
   // assign pixel_addr = (((y>>1)*320)+(x>>1));
-  assign pixel_addr = (((y>>1)<<8) + ((y>>1)<<6) + (x>>1));
-  assign chip = pixel_addr[1:0];
-  
 
-  always@ (posedge clk) begin
-    // if(display_on)
-        case(chip)
-          2'b00: color_reg <= pixel_bank ? color_line_reg_1[7:0]: color_line_reg_0[7:0];
-          2'b01: color_reg <= pixel_bank ? color_line_reg_1[15:8]: color_line_reg_0[15:8];
-          2'b10: color_reg <= pixel_bank ? color_line_reg_1[23:16]: color_line_reg_0[23:16];
-          2'b11: color_reg <= pixel_bank ? color_line_reg_1[31:24]: color_line_reg_0[31:24];
-        endcase
+  always @ (posedge clk) 
+  begin
+    if(x== 799 && y==524)
+      pixel_addr<=0;
+    else
+      pixel_addr <= (((y>>1)<<8) + ((y>>1)<<6) + ((x+1)>>1));
   end
 
 
+  assign chip = pixel_addr[1:0];
+  
   always_comb
     begin
-      // Circle
-
       if (~ display_on)
         begin          
           vga_r = 4'b0000;
