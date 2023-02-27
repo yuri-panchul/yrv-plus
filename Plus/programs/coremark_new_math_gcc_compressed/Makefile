@@ -5,7 +5,7 @@ B2H = ../common/bin2hex
 export objcopy := $(OBJ)
 export bin2hex := $(B2H)
 
-CFLAGS= -I./barebones -I. -c -march=rv32izbs -mabi=ilp32 -Os  -finline-functions -falign-functions=16 -falign-jumps=4 -falign-loops=4 -finline-limit=1000 -ffreestanding -fno-zero-initialized-in-bss -DPERFORMANCE_RUN=1 -DITERATIONS=1000
+CFLAGS= -I./barebones -I. -c -march=rv32izbs -mabi=ilp32 -O2 -ffreestanding -fno-zero-initialized-in-bss -DPERFORMANCE_RUN=1 -DITERATIONS=1000
 CCFLAGS= -I./barebones -I. -c -march=rv32iczbs -mabi=ilp32 -O2  -ffreestanding -fno-zero-initialized-in-bss -DPERFORMANCE_RUN=1 -DITERATIONS=1000
 LDFLAGS=  -nostdlib -Tyrv.ld  -nostartfiles -nostdlib
 #-mcmodel=medany

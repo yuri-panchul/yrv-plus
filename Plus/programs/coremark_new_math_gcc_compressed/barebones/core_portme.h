@@ -218,5 +218,7 @@ void portable_fini(core_portable *p);
 int ee_printf(const char *fmt, ...);
 
 #define CLOCKS_PER_SEC 6
-
+void cls();
+void put_scr(char symbol);
+void plot(int x, int y, char color);
 #endif /* CORE_PORTME_H */

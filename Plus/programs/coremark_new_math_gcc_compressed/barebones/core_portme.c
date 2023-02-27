@@ -138,6 +138,7 @@ portable_init(core_portable *p, int *argc, char *argv[])
     port0 = 0xff;
     port1 = 0xf;
     port3 = 0x01;
+    cls();
     if (sizeof(ee_ptr_int) != sizeof(ee_u8 *))
     {
         ee_printf(
@@ -149,6 +150,7 @@ portable_init(core_portable *p, int *argc, char *argv[])
         ee_printf("ERROR! Please define ee_u32 to a 32b unsigned type!\n");
     }
     p->portable_id = 1;
+
 }
 /* Function : portable_fini
         Target specific final code
@@ -156,7 +158,6 @@ portable_init(core_portable *p, int *argc, char *argv[])
 void
 portable_fini(core_portable *p)
 {
-    ee_printf("\f");
     p->portable_id = 0;
     while (1);
 }

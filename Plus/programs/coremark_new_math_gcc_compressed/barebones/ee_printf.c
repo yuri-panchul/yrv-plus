@@ -16,7 +16,14 @@ limitations under the License.
 
 #include <coremark.h>
 #include <stdarg.h>
-#include <memory_mapped_registers.h>
+#include <stdint.h>
+#include "memory_mapped_registers.h"
+#include "yrv.h"
+
+#define HAS_FLOAT 0
+#define HAS_TIME 0
+#define HAS_STDIO 0
+#define USE_CLOCK 0
 
 
 #define ZEROPAD   (1 << 0) /* Pad with zero */
@@ -29,34 +36,38 @@ limitations under the License.
 
 #define is_digit(c) ((c) >= '0' && (c) <= '9')
 
-static char *    digits       = "0123456789abcdefghijklmnopqrstuvwxyz";
-static char *    upper_digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+static char *VGA = (char *) 0xA0000000L;
+static int screen_row = 0;
+static int screen_col = 0;
+
+static char *digits = "0123456789abcdefghijklmnopqrstuvwxyz";
+static char *upper_digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
 static ee_size_t strnlen(const char *s, ee_size_t count);
 
+extern void very_long_sleep();
+
 static ee_size_t
-strnlen(const char *s, ee_size_t count)
-{
+strnlen(const char *s, ee_size_t count) {
     const char *sc;
-    for (sc = s; *sc != '\0' && count--; ++sc)
-        ;
+    for (sc = s; *sc != '\0' && count--; ++sc);
     return sc - s;
 }
 
 static int
-skip_atoi(const char **s)
-{
+skip_atoi(const char **s) {
     int i = 0;
     while (is_digit(**s))
         i = i * 10 + *((*s)++) - '0';
     return i;
 }
 
+
 static char *
-number(char *str, long num, int base, int size, int precision, int type)
-{
-    char  c, sign, tmp[66];
+number(char *str, long num, int base, int size, int precision, int type) {
+    char c, sign, tmp[66];
     char *dig = digits;
-    int   i;
+    int i;
 
     if (type & UPPERCASE)
         dig = upper_digits;
@@ -65,30 +76,23 @@ number(char *str, long num, int base, int size, int precision, int type)
     if (base < 2 || base > 36)
         return 0;
 
-    c    = (type & ZEROPAD) ? '0' : ' ';
+    c = (type & ZEROPAD) ? '0' : ' ';
     sign = 0;
-    if (type & SIGN)
-    {
-        if (num < 0)
-        {
+    if (type & SIGN) {
+        if (num < 0) {
             sign = '-';
-            num  = -num;
+            num = -num;
             size--;
-        }
-        else if (type & PLUS)
-        {
+        } else if (type & PLUS) {
             sign = '+';
             size--;
-        }
-        else if (type & SPACE)
-        {
+        } else if (type & SPACE) {
             sign = ' ';
             size--;
         }
     }
 
-    if (type & HEX_PREP)
-    {
+    if (type & HEX_PREP) {
         if (base == 16)
             size -= 2;
         else if (base == 8)
@@ -99,12 +103,10 @@ number(char *str, long num, int base, int size, int precision, int type)
 
     if (num == 0)
         tmp[i++] = '0';
-    else
-    {
-        while (num != 0)
-        {
-            tmp[i++] = dig[((unsigned long)num) % (unsigned)base];
-            num      = ((unsigned long)num) / (unsigned)base;
+    else {
+        while (num != 0) {
+            tmp[i++] = dig[((unsigned long) num) % (unsigned) base];
+            num = ((unsigned long) num) / (unsigned) base;
         }
     }
 
@@ -117,12 +119,10 @@ number(char *str, long num, int base, int size, int precision, int type)
     if (sign)
         *str++ = sign;
 
-    if (type & HEX_PREP)
-    {
+    if (type & HEX_PREP) {
         if (base == 8)
             *str++ = '0';
-        else if (base == 16)
-        {
+        else if (base == 16) {
             *str++ = '0';
             *str++ = digits[33];
         }
@@ -141,18 +141,17 @@ number(char *str, long num, int base, int size, int precision, int type)
     return str;
 }
 
+
 static char *
-eaddr(char *str, unsigned char *addr, int size, int precision, int type)
-{
-    char  tmp[24];
+eaddr(char *str, unsigned char *addr, int size, int precision, int type) {
+    char tmp[24];
     char *dig = digits;
-    int   i, len;
+    int i, len;
 
     if (type & UPPERCASE)
         dig = upper_digits;
     len = 0;
-    for (i = 0; i < 6; i++)
-    {
+    for (i = 0; i < 6; i++) {
         if (i != 0)
             tmp[len++] = ':';
         tmp[len++] = dig[addr[i] >> 4];
@@ -171,33 +170,27 @@ eaddr(char *str, unsigned char *addr, int size, int precision, int type)
 }
 
 static char *
-iaddr(char *str, unsigned char *addr, int size, int precision, int type)
-{
+iaddr(char *str, unsigned char *addr, int size, int precision, int type) {
     char tmp[24];
-    int  i, n, len;
+    int i, n, len;
 
     len = 0;
-    for (i = 0; i < 4; i++)
-    {
+    for (i = 0; i < 4; i++) {
         if (i != 0)
             tmp[len++] = '.';
         n = addr[i];
 
         if (n == 0)
             tmp[len++] = digits[0];
-        else
-        {
-            if (n >= 100)
-            {
+        else {
+            if (n >= 100) {
                 tmp[len++] = digits[n / 100];
-                n          = n % 100;
+                n = n % 100;
                 tmp[len++] = digits[n / 10];
-                n          = n % 10;
-            }
-            else if (n >= 10)
-            {
+                n = n % 10;
+            } else if (n >= 10) {
                 tmp[len++] = digits[n / 10];
-                n          = n % 10;
+                n = n % 10;
             }
 
             tmp[len++] = digits[n];
@@ -217,35 +210,31 @@ iaddr(char *str, unsigned char *addr, int size, int precision, int type)
 
 
 static int
-ee_vsprintf(char *buf, const char *fmt, va_list args)
-{
-    int           len;
+ee_vsprintf(char *buf, const char *fmt, va_list args) {
+    int len;
     unsigned long num;
-    int           i, base;
-    char *        str;
-    char *        s;
+    int i, base;
+    char *str;
+    char *s;
 
     int flags; // Flags to number()
 
     int field_width; // Width of output field
     int precision;   // Min. # of digits for integers; max number of chars for
-                     // from string
+    // from string
     int qualifier;   // 'h', 'l', or 'L' for integer fields
 
-    for (str = buf; *fmt; fmt++)
-    {
-        if (*fmt != '%')
-        {
+    for (str = buf; *fmt; fmt++) {
+        if (*fmt != '%') {
             *str++ = *fmt;
             continue;
         }
 
         // Process flags
         flags = 0;
-    repeat:
+        repeat:
         fmt++; // This also skips first '%'
-        switch (*fmt)
-        {
+        switch (*fmt) {
             case '-':
                 flags |= LEFT;
                 goto repeat;
@@ -267,12 +256,10 @@ ee_vsprintf(char *buf, const char *fmt, va_list args)
         field_width = -1;
         if (is_digit(*fmt))
             field_width = skip_atoi(&fmt);
-        else if (*fmt == '*')
-        {
+        else if (*fmt == '*') {
             fmt++;
             field_width = va_arg(args, int);
-            if (field_width < 0)
-            {
+            if (field_width < 0) {
                 field_width = -field_width;
                 flags |= LEFT;
             }
@@ -280,13 +267,11 @@ ee_vsprintf(char *buf, const char *fmt, va_list args)
 
         // Get the precision
         precision = -1;
-        if (*fmt == '.')
-        {
+        if (*fmt == '.') {
             ++fmt;
             if (is_digit(*fmt))
                 precision = skip_atoi(&fmt);
-            else if (*fmt == '*')
-            {
+            else if (*fmt == '*') {
                 ++fmt;
                 precision = va_arg(args, int);
             }
@@ -296,8 +281,7 @@ ee_vsprintf(char *buf, const char *fmt, va_list args)
 
         // Get the conversion qualifier
         qualifier = -1;
-        if (*fmt == 'l' || *fmt == 'L')
-        {
+        if (*fmt == 'l' || *fmt == 'L') {
             qualifier = *fmt;
             fmt++;
         }
@@ -305,13 +289,12 @@ ee_vsprintf(char *buf, const char *fmt, va_list args)
         // Default base
         base = 10;
 
-        switch (*fmt)
-        {
+        switch (*fmt) {
             case 'c':
                 if (!(flags & LEFT))
                     while (--field_width > 0)
                         *str++ = ' ';
-                *str++ = (unsigned char)va_arg(args, int);
+                *str++ = (unsigned char) va_arg(args, int);
                 while (--field_width > 0)
                     *str++ = ' ';
                 continue;
@@ -331,13 +314,12 @@ ee_vsprintf(char *buf, const char *fmt, va_list args)
                 continue;
 
             case 'p':
-                if (field_width == -1)
-                {
+                if (field_width == -1) {
                     field_width = 2 * sizeof(void *);
                     flags |= ZEROPAD;
                 }
                 str = number(str,
-                             (unsigned long)va_arg(args, void *),
+                             (unsigned long) va_arg(args, void *),
                              16,
                              field_width,
                              precision,
@@ -347,7 +329,22 @@ ee_vsprintf(char *buf, const char *fmt, va_list args)
             case 'A':
                 flags |= UPPERCASE;
 
-            // Integer number formats - set up the flags and "break"
+            case 'a':
+                if (qualifier == 'l')
+                    str = eaddr(str,
+                                va_arg(args, unsigned char *),
+                                field_width,
+                                precision,
+                                flags);
+                else
+                    str = iaddr(str,
+                                va_arg(args, unsigned char *),
+                                field_width,
+                                precision,
+                                flags);
+                continue;
+
+                // Integer number formats - set up the flags and "break"
             case 'o':
                 base = 8;
                 break;
@@ -390,36 +387,67 @@ ee_vsprintf(char *buf, const char *fmt, va_list args)
     return str - buf;
 }
 
-void very_long_sleep(){
-        for(int i=0;i <600; i++) {
-    asm("nop");        
+
+void plot(int x, int y, char color) {
+    VGA[(y << 8) + (y << 6) + x] = color;
 }
+
+void put_scr(char symbol) {
+    if (symbol != '\n') {
+        for (int dr = 0; dr < 8; dr++) {
+            char row = font[8 * symbol + dr];
+            int dx = 0;
+            for (int col = 128; col > 0; col = col >> 1) {
+                if (row & col) {
+                    plot(dx + screen_col * 8, dr + screen_row * 8, 0xff);
+                }
+                dx++;
+            }
+        }
+    } else {
+        screen_row++;
+        if (screen_row > 30) screen_row = 0;
+        screen_col = 0;
+        return;
+    }
+
+    screen_col++;
+    if (screen_col >= 40) {
+        screen_col = 0;
+        screen_row++;
+        if (screen_row >= 30) {
+            screen_row = 0;
+            screen_col = 0;
+        }
+    }
+
+}
+
+void cls() {
+    for (int x = 0; x < 320; x++) {
+        for (int y = 0; y < 240; y++) {
+            plot(x, y, 0);
+        }
+    }
 }
 
 void
-uart_send_char(char c)
-{
-        port2 = c;
-        port3 = 0x01;   
-        very_long_sleep(); 
-        port3 = 0x00;
-        very_long_sleep();     
+uart_send_char(char c) {
+    put_scr(c);
 }
 
 
 int
-ee_printf(const char *fmt, ...)
-{
-    char    buf[1024], *p;
+ee_printf(const char *fmt, ...) {
+    char buf[1024], *p;
     va_list args;
-    int     n = 0;
+    int n = 0;
 
     va_start(args, fmt);
     ee_vsprintf(buf, fmt, args);
     va_end(args);
     p = buf;
-    while (*p)
-    {
+    while (*p) {
         uart_send_char(*p);
         n++;
         p++;
@@ -427,3 +455,4 @@ ee_printf(const char *fmt, ...)
 
     return n;
 }
+
