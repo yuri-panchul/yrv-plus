@@ -107,7 +107,15 @@ fi
 
 #-----------------------------------------------------------------------------
 
-INTELFPGA_INSTALL_DIR=intelFPGA_lite
+
+if [ -z ${INTELFPGA_INSTALL_DIR+x} ] 
+then 
+    echo "Quartus installetion directory is not set." 
+    INTELFPGA_INSTALL_DIR=intelFPGA_lite
+else 
+    echo "Quartus package installation directory '$INTELFPGA_INSTALL_DIR'"; 
+fi
+
 QUESTA_DIR=questa_fse
 QUARTUS_DIR=quartus
 
