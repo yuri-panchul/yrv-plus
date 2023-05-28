@@ -1,5 +1,7 @@
+scripts_dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+
 [ -z "${setup_source_bash_already_run-}" ] && \
-. "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/00_setup.source.bash"
+. "$scripts_dir/00_setup.source.bash"
 
 is_command_available_or_error quartus_pgm " from Intel FPGA Quartus Prime package"
 
