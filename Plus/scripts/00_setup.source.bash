@@ -115,6 +115,12 @@ if [ "$OSTYPE" = "linux-gnu" ]
 then
     INTELFPGA_INSTALL_PARENT_DIR="$HOME"
 
+    if ! [ -d "$INTELFPGA_INSTALL_PARENT_DIR/$INTELFPGA_INSTALL_DIR" ]
+    then
+        INTELFPGA_INSTALL_PARENT_DIR_FIRST="$INTELFPGA_INSTALL_PARENT_DIR"
+        INTELFPGA_INSTALL_PARENT_DIR=/opt
+    fi
+
     QUESTA_BIN_DIR=bin
     QUESTA_LIB_DIR=linux_x86_64
 
@@ -145,8 +151,15 @@ fi
 
 if ! [ -d "$INTELFPGA_INSTALL_PARENT_DIR/$INTELFPGA_INSTALL_DIR" ]
 then
-    error "expected to find '$INTELFPGA_INSTALL_DIR' directory"  \
-          " in '$INTELFPGA_INSTALL_PARENT_DIR'"
+    if [ -z "${INTELFPGA_INSTALL_PARENT_DIR_FIRST-}" ]
+    then
+        error "expected to find '$INTELFPGA_INSTALL_DIR' directory"  \
+              "in '$INTELFPGA_INSTALL_PARENT_DIR'"
+    else
+        error "expected to find '$INTELFPGA_INSTALL_DIR' directory"  \
+              "either in '$INTELFPGA_INSTALL_PARENT_DIR_FIRST'"      \
+              "or in '$INTELFPGA_INSTALL_PARENT_DIR'"
+    fi
 fi
 
 #-----------------------------------------------------------------------------
@@ -176,22 +189,11 @@ fi
 
 export QUESTA_ROOTDIR="$FIRST_VERSION_DIR/$QUESTA_DIR"
 
-if [ -z "${PATH-}" ]
-then
-    export PATH="$QUESTA_ROOTDIR/$QUESTA_BIN_DIR"
-else
-    export PATH="$PATH:$QUESTA_ROOTDIR/$QUESTA_BIN_DIR"
-fi
-
-if [ -z "${LD_LIBRARY_PATH-}" ]
-then
-    export LD_LIBRARY_PATH="$QUESTA_ROOTDIR/$QUESTA_LIB_DIR"
-else
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$QUESTA_ROOTDIR/$QUESTA_LIB_DIR"
-fi
+export PATH="${PATH:+$PATH:}$QUESTA_ROOTDIR/$QUESTA_BIN_DIR"
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$QUESTA_ROOTDIR/$QUESTA_LIB_DIR"
 
 export QUARTUS_ROOTDIR="$FIRST_VERSION_DIR/$QUARTUS_DIR"
-export PATH="$PATH:$QUARTUS_ROOTDIR/$QUARTUS_BIN_DIR"
+export PATH="${PATH:+$PATH:}$QUARTUS_ROOTDIR/$QUARTUS_BIN_DIR"
 
 #-----------------------------------------------------------------------------
 
@@ -244,5 +246,5 @@ if    ! [ -f /usr/lib64/libcrypt.so.1 ] \
    &&   [ -f /usr/lib64/libcrypt.so   ]
 then
     ln -sf /usr/lib64/libcrypt.so libcrypt.so.1
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$PWD"
+    export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$PWD"
 fi
