@@ -225,10 +225,13 @@ fi
 
 #-----------------------------------------------------------------------------
 
-rars=rars1_5.jar
-rars_version=v1.5
+if ! is_command_available rars
+then
+  rars_jar=rars1_5.jar
+  rars_version=v1.5
 
-rars_path="$external_dir/$rars"
+  rars_path="$external_dir/$rars_jar"
+fi
 
 #-----------------------------------------------------------------------------
 

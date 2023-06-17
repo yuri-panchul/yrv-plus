@@ -1,5 +1,11 @@
 . "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/00_setup.source.bash"
 
+dev=/dev/ttyUSB0
+
+[ -f "$dev" ] || error "USB-to-UART $dev is not connected or is not working"
+
+gr=dialout
+
 # id
 #
 # -G, --groups  print all group IDs
@@ -10,8 +16,6 @@
 # -w, --word-regexp      match only whole words
 # -q, --quiet, --silent  suppress all normal output
 
-gr=dialout
-
 if ! id -nG | grep -qw $gr
 then
     error "User \"$USER\" is not in \"$gr\" group."    \
@@ -21,10 +25,8 @@ then
         "to logout and login instead of the reboot)."
 fi
 
-dev=/dev/ttyUSB0
-
    stty -F $dev raw speed 115200 -crtscts cs8 -parenb -cstopb  \
-|| error "USB-to-UART is not connected or is not working"
+|| error "USB-to-UART is not working"
 
 if [ -f $program_mem32 ]; then
     cat $program_mem32 > $dev
