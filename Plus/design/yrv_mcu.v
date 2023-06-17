@@ -149,7 +149,7 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
 `else
   wire    [3:0] mem_wr_byte;                               /* system ram byte enables      */
 
-  `if USE_MEM_BANKS_FOR_BYTE_LINES
+  `ifdef USE_MEM_BANKS_FOR_BYTE_LINES
   reg     [7:0] mcu_mem_bank0 [0:1023];                    /* system ram banks             */
   reg     [7:0] mcu_mem_bank1 [0:1023];
   reg     [7:0] mcu_mem_bank2 [0:1023];
@@ -288,7 +288,7 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
 `else
   assign mem_wr_byte = {4{mem_wr_reg}} & mem_ble_reg & {4{mem_ready}};
 
-  `if USE_MEM_BANKS_FOR_BYTE_LINES
+  `ifdef USE_MEM_BANKS_FOR_BYTE_LINES
 
   always @ (posedge clk) begin
     if (mem_trans[0]) begin
