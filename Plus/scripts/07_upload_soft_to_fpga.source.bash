@@ -1,10 +1,9 @@
 . "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/00_setup.source.bash"
 
 dev=/dev/ttyUSB0
-
-[ -f "$dev" ] || error "USB-to-UART $dev is not connected or is not working"
-
-gr=dialout
+[ -e $dev ] || error "USB-to-UART $dev is not connected or is not working"
+dev_grp=$(stat -c "%G" $dev)
+[ -n "${dev_grp-}" ] || error "Cannot determine the groups that owns $dev"
 
 # id
 #
@@ -16,16 +15,16 @@ gr=dialout
 # -w, --word-regexp      match only whole words
 # -q, --quiet, --silent  suppress all normal output
 
-if ! id -nG | grep -qw $gr
+if ! id -nG | grep -qw $dev_grp
 then
-    error "User \"$USER\" is not in \"$gr\" group."    \
-        "Run: \"sudo usermod -a -G $gr $USER\","       \
-        "then reboot and try again."                   \
-        "(On some systems it is sufficient"            \
-        "to logout and login instead of the reboot)."
+    error "User \"$USER\" is not in \"$dev_grp\" group."  \
+          "Run: \"sudo usermod -a -G $dev_grp $USER\","   \
+          "then reboot and try again."                    \
+          "(On some systems it is sufficient"             \
+          "to logout and login instead of the reboot)."
 fi
 
-   stty -F $dev raw speed 115200 -crtscts cs8 -parenb -cstopb  \
+   stty -F $dev raw speed 115200 -crtscts cs8 -parenb -cstopb > /dev/null  \
 || error "USB-to-UART is not working"
 
 if [ -f $program_mem32 ]; then
