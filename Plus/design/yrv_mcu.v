@@ -128,11 +128,36 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
   reg    [15:0] port6_reg;
   reg    [15:0] mem_addr_reg;                              /* reg'd memory address         */
 
+  /*****************************************************************************************/
+  /* This option allows to create examples with read-only memory                           */
+  /* when booting from UART is not available.                                              */
+  /*                                                                                       */
+  /* Note that Intel FPGA Quartus Prime does not support 8-bit readmemh for synthesis.     */
+  /* It means that the user has to either use booting from UART                            */
+  /* or rely on read-only 32-bit wide memory inside inst_mem.v undef ifdef INSTANCE_MEM.   */
+  /*****************************************************************************************/
+
+`ifdef INTEL_VERSION
+  `ifndef SIMULATION
+    `define USE_MEM_BANKS_FOR_BYTE_LINES
+    `define NO_READMEMH_FOR_8_BIT_WIDE_MEM
+  `endif
+`endif
+
 `ifdef INSTANCE_MEM
   wire   [31:0] mem_rdata;                                 /* raw read data                */
 `else
   wire    [3:0] mem_wr_byte;                               /* system ram byte enables      */
+
+  `if USE_MEM_BANKS_FOR_BYTE_LINES
+  reg     [7:0] mcu_mem_bank0 [0:1023];                    /* system ram banks             */
+  reg     [7:0] mcu_mem_bank1 [0:1023];
+  reg     [7:0] mcu_mem_bank2 [0:1023];
+  reg     [7:0] mcu_mem_bank3 [0:1023];
+  `else
   reg     [7:0] mcu_mem [0:4095];                          /* system ram                   */
+  `endif
+
   reg    [31:0] mem_rdata;                                 /* raw read data                */
 `endif
 
@@ -263,6 +288,23 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
 `else
   assign mem_wr_byte = {4{mem_wr_reg}} & mem_ble_reg & {4{mem_ready}};
 
+  `if USE_MEM_BANKS_FOR_BYTE_LINES
+
+  always @ (posedge clk) begin
+    if (mem_trans[0]) begin
+      mem_rdata[31:24] <= mcu_mem_bank3 [mem_addr[11:2]];
+      mem_rdata[23:16] <= mcu_mem_bank2 [mem_addr[11:2]];
+      mem_rdata[15:8]  <= mcu_mem_bank1 [mem_addr[11:2]];
+      mem_rdata[7:0]   <= mcu_mem_bank0 [mem_addr[11:2]];
+      end
+    if (mem_wr_byte[3]) mcu_mem_bank3 [mem_addr_reg[11:2]] <= mem_wdata[31:24];
+    if (mem_wr_byte[2]) mcu_mem_bank2 [mem_addr_reg[11:2]] <= mem_wdata[23:16];
+    if (mem_wr_byte[1]) mcu_mem_bank1 [mem_addr_reg[11:2]] <= mem_wdata[15:8];
+    if (mem_wr_byte[0]) mcu_mem_bank0 [mem_addr_reg[11:2]] <= mem_wdata[7:0];
+    end
+
+  `else
+
   always @ (posedge clk) begin
     if (mem_trans[0]) begin
       mem_rdata[31:24] <= mcu_mem[{mem_addr[11:2], 2'b11}];
@@ -276,20 +318,7 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
     if (mem_wr_byte[0]) mcu_mem[{mem_addr_reg[11:2], 2'b00}] <= mem_wdata[7:0];
     end
 
-  /*****************************************************************************************/
-  /* This option allows to create examples with read-only memory                           */
-  /* when booting from UART is not available.                                              */
-  /*                                                                                       */
-  /* Note that Intel FPGA Quartus Prime does not support 8-bit readmemh for synthesis.     */
-  /* It means that the user has to either use booting from UART                            */
-  /* or rely on read-only 32-bit wide memory inside inst_mem.v undef ifdef INSTANCE_MEM.   */
-  /*****************************************************************************************/
-
-`ifdef INTEL_VERSION
-  `ifndef SIMULATION
-    `define NO_READMEMH_FOR_8_BIT_WIDE_MEM
   `endif
-`endif
 
 `ifndef NO_READMEMH_FOR_8_BIT_WIDE_MEM
 initial $readmemh("code_demo.mem8", mcu_mem);
