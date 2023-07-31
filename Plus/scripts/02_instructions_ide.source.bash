@@ -6,7 +6,7 @@ then
 else
     if ! [ -f "$rars_path"  ]; then
         wget -O "$rars_path" -o wget.log \
-            "https://github.com/TheThirdOne/rars/releases/download/$rars_version/$rars"
+            "https://github.com/TheThirdOne/rars/releases/download/$rars_version/$rars_jar"
     fi
 
     is_command_available_or_error_and_install java default-jre
