@@ -51,7 +51,7 @@ module top
 
 
   //Memory bus interface
-  reg    [15:0] mem_addr_reg;                              /* reg'd memory address         */
+  reg    [18:0] mem_addr_reg;                              /* reg'd memory address         */
   reg     [3:0] mem_ble_reg;                               /* reg'd memory byte lane en    */
 
 

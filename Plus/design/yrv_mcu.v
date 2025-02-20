@@ -129,7 +129,7 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
   reg    [15:0] port2_reg,  port3_reg;
   reg    [15:0] port4_reg,  port5_reg;
   reg    [15:0] port6_reg,  port7_reg;
-  reg    [15:0] mem_addr_reg;                              /* reg'd memory address         */
+  reg    [18:0] mem_addr_reg;                              /* reg'd memory address         */
 
 `ifdef INSTANCE_MEM
   wire   [31:0] mem_rdata;                                 /* raw read data                */
@@ -217,7 +217,7 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
     .address_width      ( boot_address_width ),
     .data_width         ( 32                 ),
     .clk_frequency      ( `CLK_FREQUENCY     ),
-    .timeout_in_seconds ( 2                  )
+    .timeout_in_seconds ( 3                  )
   )
   BOOT_HEX_PARSER
   (
@@ -278,20 +278,20 @@ module yrv_mcu  (debug_mode, port0_reg, port1_reg, port2_reg, port3_reg, ser_clk
 `else
   assign mem_wr_byte = {4{mem_wr_reg}} & mem_ble_reg & {4{mem_ready}};
 
-/*
-  always @ (posedge clk) begin
-    if (mem_trans[0]) begin
-      mem_rdata[31:24] <= mcu_mem[{mem_addr[13:2], 2'b11}];
-      mem_rdata[23:16] <= mcu_mem[{mem_addr[13:2], 2'b10}];
-      mem_rdata[15:8]  <= mcu_mem[{mem_addr[13:2], 2'b01}];
-      mem_rdata[7:0]   <= mcu_mem[{mem_addr[13:2], 2'b00}];
-      end
-    if (mem_wr_byte[3]) mcu_mem[{mem_addr_reg[13:2], 2'b11}] <= mem_wdata[31:24];
-    if (mem_wr_byte[2]) mcu_mem[{mem_addr_reg[13:2], 2'b10}] <= mem_wdata[23:16];
-    if (mem_wr_byte[1]) mcu_mem[{mem_addr_reg[13:2], 2'b01}] <= mem_wdata[15:8];
-    if (mem_wr_byte[0]) mcu_mem[{mem_addr_reg[13:2], 2'b00}] <= mem_wdata[7:0];
-    end
-*/
+
+  // always @ (posedge clk) begin
+  //   if (mem_trans[0]) begin
+  //     mem_rdata[31:24] <= mcu_mem[{mem_addr[13:2], 2'b11}];
+  //     mem_rdata[23:16] <= mcu_mem[{mem_addr[13:2], 2'b10}];
+  //     mem_rdata[15:8]  <= mcu_mem[{mem_addr[13:2], 2'b01}];
+  //     mem_rdata[7:0]   <= mcu_mem[{mem_addr[13:2], 2'b00}];
+  //     end
+  //   if (mem_wr_byte[3]) mcu_mem[{mem_addr_reg[13:2], 2'b11}] <= mem_wdata[31:24];
+  //   if (mem_wr_byte[2]) mcu_mem[{mem_addr_reg[13:2], 2'b10}] <= mem_wdata[23:16];
+  //   if (mem_wr_byte[1]) mcu_mem[{mem_addr_reg[13:2], 2'b01}] <= mem_wdata[15:8];
+  //   if (mem_wr_byte[0]) mcu_mem[{mem_addr_reg[13:2], 2'b00}] <= mem_wdata[7:0];
+  //   end
+
   always @ (posedge clk) begin
     if (mem_trans[0]) begin
       mem_rdata[31:24] <= mcu_mem3[mem_addr[15:2]];
@@ -333,7 +333,7 @@ initial $readmemh("code_demo.mem8", mcu_mem);
   /*****************************************************************************************/
   always @ (posedge clk or negedge resetb) begin
     if (!resetb) begin
-      mem_addr_reg <= 16'h0;
+      mem_addr_reg <= 19'h0;
       mem_ble_reg  <=  4'h0;
       io_rd_reg    <=  1'b0;
       io_wr_reg    <=  1'b0;
@@ -341,7 +341,7 @@ initial $readmemh("code_demo.mem8", mcu_mem);
       mem_wr_reg   <=  1'b0;
       end
     else if (mem_ready) begin
-      mem_addr_reg <= mem_addr[15:0];
+      mem_addr_reg <= mem_addr[18:0];
       mem_ble_reg  <= mem_ble;
       io_rd_reg    <= !mem_write &&  mem_trans[0] && (mem_addr[31:16] == `IO_BASE);
       io_wr_reg    <=  mem_write && &mem_trans    && (mem_addr[31:16] == `IO_BASE);
